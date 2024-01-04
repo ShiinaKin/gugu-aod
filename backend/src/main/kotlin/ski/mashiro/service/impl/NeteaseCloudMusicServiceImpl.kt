@@ -58,8 +58,10 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         val searchReq = RequestBuilderFactory.getReqBuilderWithUA()
             .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/search?keywords=$keyword&limit=2")
             .build()
-        val json = okHttpClient.newCall(searchReq).execute().run {
-            body!!.string()
+        val json = withContext(Dispatchers.IO) {
+            okHttpClient.newCall(searchReq).execute().run {
+                body!!.string()
+            }
         }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         val result = respResult["result"] as HashMap<*, *>
@@ -83,6 +85,7 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
             music["name"] as String,
             singer,
             music["duration"].toString().toLong(),
+            null,
             null
         )
     }
@@ -95,14 +98,27 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         val urlReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
             .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/url?id=${music.id}")
             .build()
-        val json = withContext(Dispatchers.IO) {
+        var json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(urlReq).execute().run {
                 body!!.string()
             }
         }
-        val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
-        val data = (respResult["data"] as List<*>)[0] as HashMap<*, *>
+        var respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
+        var data = (respResult["data"] as List<*>)[0] as HashMap<*, *>
         music.url = data["url"] as String
+
+        val detailReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
+            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/detail?ids=${music.id}")
+            .build()
+        json = withContext(Dispatchers.IO) {
+            okHttpClient.newCall(detailReq).execute().run {
+                body!!.string()
+            }
+        }
+        respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
+        data = (respResult["songs"] as List<*>)[0] as HashMap<*, *>
+        val album = data["al"] as HashMap<*, *>
+        music.coverImgUrl = album["picUrl"] as String
         return music
     }
 

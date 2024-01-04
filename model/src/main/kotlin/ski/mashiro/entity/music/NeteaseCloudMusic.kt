@@ -10,6 +10,7 @@ data class NeteaseCloudMusic(
     val name: String,
     val singer: String,
     val duration: String,
+    var coverImgUrl: String?,
     var url: String?
 ) {
     constructor(
@@ -17,12 +18,14 @@ data class NeteaseCloudMusic(
         name: String,
         singer: String,
         duration: Long,
+        coverImgUrl: String?,
         url: String?
     ): this(
         id,
         name,
         singer,
-        DurationFormatUtils.formatDurationHMS(duration),
+        DurationFormatUtils.formatDuration(duration, "HH:mm:ss"),
+        coverImgUrl,
         url,
     )
 }
