@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":backend"))
     implementation(project(":model"))
     implementation(compose.desktop.currentOs)
+    implementation(compose.material3)
     api(compose.foundation)
     api(compose.animation)
     api("moe.tlaster:precompose:1.5.10")
