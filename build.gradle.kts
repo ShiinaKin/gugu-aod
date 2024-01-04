@@ -2,6 +2,12 @@ plugins {
     kotlin("jvm")
 }
 
+repositories {
+    mavenLocal()
+    maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+    mavenCentral()
+}
+
 subprojects {
     group = "ski.mashiro"
     version = "1.0-SNAPSHOT"
@@ -9,8 +15,9 @@ subprojects {
     apply(plugin = "kotlin")
 
     repositories {
-        mavenCentral()
+        mavenLocal()
         maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+        mavenCentral()
     }
 
     dependencies {
