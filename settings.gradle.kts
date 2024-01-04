@@ -14,7 +14,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
-rootProject.name = "gugu-mod"
+rootProject.name = "gugu-aod"
 include("common")
 include("model")
 include("backend")
