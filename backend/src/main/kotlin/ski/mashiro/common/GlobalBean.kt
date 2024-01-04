@@ -24,6 +24,6 @@ object GlobalBean {
     lateinit var songRequestConfig: SongRequestConfig
     lateinit var uidCache: Cache<Long, Long>
     lateinit var musicCache: Cache<Long, NeteaseCloudMusic>
-    lateinit var musicList: MutableList<NeteaseCloudMusic>
+    lateinit var musicList: MutableList<Pair<String, NeteaseCloudMusic>>
     var webSocket: WebSocket? = null
 }

@@ -65,7 +65,7 @@ object CometHandler {
             if (Objects.nonNull(GlobalBean.musicCache.getIfPresent(musicWithOutUrl.id))) {
                 return
             }
-            GlobalBean.musicList.add(musicWithOutUrl)
+            GlobalBean.musicList.add(comet.username to musicWithOutUrl)
             if (isAdmin) {
                 return
             }
