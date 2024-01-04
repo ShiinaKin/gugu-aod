@@ -44,7 +44,7 @@ fun MenuComponent() {
         ) {
             Column {
                 Image(
-                    painter = painterResource("home.svg"),
+                    painter = painterResource("icon/home.svg"),
                     "homeIcon",
                     alignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
@@ -69,7 +69,7 @@ fun MenuComponent() {
         ) {
             Column {
                 Image(
-                    painter = painterResource("manage_search.svg"),
+                    painter = painterResource("icon/manage_search.svg"),
                     "searchIcon",
                     alignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
@@ -94,7 +94,7 @@ fun MenuComponent() {
         ) {
             Column {
                 Image(
-                    painter = painterResource("setting.svg"),
+                    painter = painterResource("icon/setting.svg"),
                     "settingIcon",
                     alignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
