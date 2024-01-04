@@ -3,9 +3,11 @@ package ski.mashiro
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import moe.tlaster.precompose.PreComposeApp
@@ -18,9 +20,13 @@ import java.awt.Dimension
  */
 fun main() = application {
     Window(
-        title = "GuGu-VOD",
+        title = "GuGu-MOD",
         icon = painterResource("icon.png"),
-        state = rememberWindowState(width = 500.dp, height = 700.dp),
+        state = rememberWindowState(
+            width = 500.dp,
+            height = 700.dp,
+            position = WindowPosition(Alignment.Center)
+        ),
         onCloseRequest = ::exitApplication
     ) {
         window.minimumSize = Dimension(600, 400)
