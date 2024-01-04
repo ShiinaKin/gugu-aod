@@ -54,17 +54,18 @@ fun HomeView() {
                     }
                     Divider(Modifier.padding(2.dp, 1.dp))
                 }
-                itemsIndexed(GlobalBean.musicList) { idx, music ->
+                itemsIndexed(GlobalBean.musicList) { idx, pair ->
+                    val (username, music) = pair
                     Row(Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
                         TableCell(text = idx.toString(), idxWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
                         TableCell(text = music.name, musicNameWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
                         TableCell(text = music.singer, singerWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
-                        TableCell(text = "mashirot", bookingUsernameWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
+                        TableCell(text = username, bookingUsernameWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
                     }
                 }
             }
         }
-        Divider(modifier = Modifier.fillMaxWidth().padding(0.dp, 4.dp), color = Color.Red)
+        Divider(modifier = Modifier.fillMaxWidth().padding(0.dp, 4.dp))
         MediaPlayerComponent()
     }
 }
