@@ -1,35 +1,39 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose")
 }
 
-group = "ski.mashiro"
-version = "1.0-SNAPSHOT"
+subprojects {
+    group = "ski.mashiro"
+    version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    google()
-}
+    apply(plugin = "kotlin")
 
-dependencies {
-    // Note, if you develop a library, you should use compose.desktop.common.compose.desktop.currentOs
-    // should be used in launcher-sourceSet
-    // (in a separate module for demo project and in testMain).
-    // With compose.desktop.common you will also lose @Preview functionality
-    implementation(compose.desktop.currentOs)
-}
+    repositories {
+        mavenCentral()
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+    }
 
-compose.desktop {
-    application {
-        mainClass = "MainKt"
+    dependencies {
+        // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+        implementation("com.squareup.okhttp3:okhttp:4.12.0")
+        // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
+        // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+        implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
+        // https://mvnrepository.com/artifact/commons-codec/commons-codec
+        implementation("commons-codec:commons-codec:1.16.0")
+        // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+        implementation("org.apache.commons:commons-lang3:3.14.0")
+        // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+        testImplementation("org.jetbrains.kotlin:kotlin-test")
+    }
 
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "gugu-vod"
-            packageVersion = "1.0.0"
-        }
+    tasks.test {
+        useJUnitPlatform()
+    }
+
+    kotlin {
+        jvmToolchain(17)
     }
 }
