@@ -45,8 +45,6 @@ object BackendMain {
             .expireAfterWrite(Duration.parse(GlobalBean.songRequestConfig.eachUserCoolDown).toJavaDuration()).build()
         GlobalBean.musicCache = Caffeine.newBuilder()
             .expireAfterWrite(Duration.parse(GlobalBean.songRequestConfig.eachSongCoolDown).toJavaDuration()).build()
-
-        GlobalBean.musicList = ArrayList(GlobalBean.songRequestConfig.waitListMaxSize)
     }
 
     fun connect2Room() = WebSocketServiceImpl.connect2Room()
