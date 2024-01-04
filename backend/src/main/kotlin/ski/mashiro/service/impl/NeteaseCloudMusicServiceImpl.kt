@@ -1,5 +1,7 @@
 package ski.mashiro.service.impl
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.StringUtils
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
 import ski.mashiro.common.GlobalBean.neteaseCloudMusicConfig
@@ -36,8 +38,10 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
                     }
             )
             .build()
-        val json = okHttpClient.newCall(loginReq).execute().run {
-            body!!.string()
+        val json = withContext(Dispatchers.IO) {
+            okHttpClient.newCall(loginReq).execute().run {
+                body!!.string()
+            }
         }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         if ((respResult["code"] as Int) != 200) {
@@ -91,8 +95,10 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         val urlReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
             .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/url?id=${music.id}")
             .build()
-        val json = okHttpClient.newCall(urlReq).execute().run {
-            body!!.string()
+        val json = withContext(Dispatchers.IO) {
+            okHttpClient.newCall(urlReq).execute().run {
+                body!!.string()
+            }
         }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         val data = (respResult["data"] as List<*>)[0] as HashMap<*, *>
@@ -120,8 +126,10 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         val urlReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
             .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/status")
             .build()
-        val json = okHttpClient.newCall(urlReq).execute().run {
-            body!!.string()
+        val json = withContext(Dispatchers.IO) {
+            okHttpClient.newCall(urlReq).execute().run {
+                body!!.string()
+            }
         }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         return respResult["account"] != null

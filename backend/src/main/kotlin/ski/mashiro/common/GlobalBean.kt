@@ -18,7 +18,7 @@ import ski.mashiro.entity.music.NeteaseCloudMusic
 object GlobalBean {
     val JSON_MAPPER = JsonMapper().registerKotlinModule()
     val YAML_MAPPER = YAMLMapper().registerKotlinModule()
-    val COROUTINE_SCOPE = CoroutineScope(Dispatchers.Default)
+    val MAIN_SCOPE = CoroutineScope(Dispatchers.Main)
     lateinit var config: Config
     lateinit var neteaseCloudMusicConfig: NeteaseCloudMusicConfig
     lateinit var songRequestConfig: SongRequestConfig

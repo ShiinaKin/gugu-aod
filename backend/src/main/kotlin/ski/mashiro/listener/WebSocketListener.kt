@@ -1,5 +1,6 @@
 package ski.mashiro.listener
 
+import kotlinx.coroutines.launch
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -27,7 +28,9 @@ class WebSocketListener : WebSocketListener() {
         HeartbeatTimer.stop()
         webSocket.cancel()
         GlobalBean.webSocket = null
-        WebSocketServiceImpl.reconnect()
+        GlobalBean.MAIN_SCOPE.launch {
+            WebSocketServiceImpl.reconnect()
+        }
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {

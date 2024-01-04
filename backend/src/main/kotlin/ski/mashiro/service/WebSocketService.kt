@@ -6,6 +6,6 @@ package ski.mashiro.service
 interface WebSocketService {
 
     fun connect2Room()
-    fun reconnect()
+    suspend fun reconnect()
 
 }

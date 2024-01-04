@@ -2,7 +2,7 @@ package ski.mashiro.handler
 
 import kotlinx.coroutines.launch
 import ski.mashiro.common.GlobalBean
-import ski.mashiro.common.GlobalBean.COROUTINE_SCOPE
+import ski.mashiro.common.GlobalBean.MAIN_SCOPE
 import ski.mashiro.common.GlobalBean.config
 import ski.mashiro.common.GlobalBean.songRequestConfig
 import ski.mashiro.const.CometConsts.INFO_CONTENT_IDX
@@ -36,10 +36,12 @@ object CometHandler {
         if (!comet.content.startsWith(songRequestConfig.prefix) || comet.content[2] != ' ') {
             return
         }
-        songRequest(comet)
+        MAIN_SCOPE.launch {
+            songRequest(comet)
+        }
     }
 
-    private fun songRequest(comet: Comet) {
+    private suspend fun songRequest(comet: Comet) {
         if (GlobalBean.musicList.size >= songRequestConfig.waitListMaxSize) {
             return
         }
@@ -57,25 +59,21 @@ object CometHandler {
         if (Objects.nonNull(GlobalBean.uidCache.getIfPresent(comet.uid))) {
             return
         }
-        COROUTINE_SCOPE.launch {
-            launch inner@{
-                val keyword = comet.content.substring(3)
-                runCatching {
-                    val musicWithOutUrl = NeteaseCloudMusicServiceImpl.getMusicByKeyword(keyword)
-                    if (Objects.nonNull(GlobalBean.musicCache.getIfPresent(musicWithOutUrl.id))) {
-                        return@inner
-                    }
-                    GlobalBean.musicList.add(musicWithOutUrl)
-                    if (isAdmin) {
-                        return@inner
-                    }
-                    GlobalBean.uidCache.put(comet.uid, comet.uid)
-                    GlobalBean.musicCache.put(musicWithOutUrl.id, musicWithOutUrl)
-                }.getOrElse {
-                    // TODO remind
-                    println(it.message)
-                }
+        val keyword = comet.content.substring(3)
+        runCatching {
+            val musicWithOutUrl = NeteaseCloudMusicServiceImpl.getMusicByKeyword(keyword)
+            if (Objects.nonNull(GlobalBean.musicCache.getIfPresent(musicWithOutUrl.id))) {
+                return
             }
+            GlobalBean.musicList.add(musicWithOutUrl)
+            if (isAdmin) {
+                return
+            }
+            GlobalBean.uidCache.put(comet.uid, comet.uid)
+            GlobalBean.musicCache.put(musicWithOutUrl.id, musicWithOutUrl)
+        }.getOrElse {
+            // TODO remind
+            println(it.message)
         }
     }
 

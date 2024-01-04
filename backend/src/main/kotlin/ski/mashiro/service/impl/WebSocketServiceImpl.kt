@@ -1,6 +1,8 @@
 package ski.mashiro.service.impl
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
 import ski.mashiro.common.GlobalBean.config
 import ski.mashiro.common.GlobalBean.webSocket
@@ -61,35 +63,32 @@ object WebSocketServiceImpl : WebSocketService {
         }
     }
 
-    override fun reconnect() {
+    override suspend fun reconnect() {
         if (webSocket != null) {
             return
         }
-        CoroutineScope(Dispatchers.Default).launch {
+        withContext(Dispatchers.IO) {
             if (LockUtils.tryLock()) {
                 try {
-                    coroutineScope {
-                        for (i in 0 until MAX_RECONNECT_NUM) {
-                            println("尝试重连, 次数: ${i + 1}")
-                            connect2Room()
-                            if (webSocket != null) {
-                                println("重连成功")
-                                return@coroutineScope
-                            }
-                            delay(kotlin.time.Duration.parse("5s"))
+                    for (i in 0 until MAX_RECONNECT_NUM) {
+                        println("尝试重连, 次数: ${i + 1}")
+                        connect2Room()
+                        if (webSocket != null) {
+                            println("重连成功")
+                            return@withContext
                         }
-                        if (webSocket == null) {
-                            println("已达最大重连次数, 重连失败")
-                            return@coroutineScope
-                        }
+                        delay(kotlin.time.Duration.parse("5s"))
+                    }
+                    if (webSocket == null) {
+                        println("已达最大重连次数, 重连失败")
+                        return@withContext
                     }
                 } finally {
                     LockUtils.releaseLock()
                 }
-                return@launch
+                return@withContext
             }
             println("已有线程正在尝试重连")
         }
     }
-
 }
