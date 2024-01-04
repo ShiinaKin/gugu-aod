@@ -24,17 +24,20 @@ fun MenuComponent() {
     Column(
         modifier = Modifier
             .padding(10.dp, 5.dp)
-            .width(60.dp)
+            .width(64.dp)
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        val btnSize = 60.dp
+        val btnDescFontSize = 12.sp
 
         Button(
             onClick = {
                 Router.navController.navigate("/home")
             },
             modifier = Modifier.padding(0.dp, 5.dp)
-                .size(55.dp, 55.dp),
+                .size(btnSize),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent
             )
@@ -50,7 +53,7 @@ fun MenuComponent() {
                     modifier = Modifier.fillMaxWidth(),
                     text = "主页",
                     textAlign = TextAlign.Center,
-                    fontSize = 8.sp
+                    fontSize = btnDescFontSize
                 )
             }
         }
@@ -59,7 +62,7 @@ fun MenuComponent() {
                 Router.navController.navigate("/manual_song_req")
             },
             modifier = Modifier.padding(0.dp, 5.dp)
-                .size(55.dp, 55.dp),
+                .size(btnSize),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent
             )
@@ -75,7 +78,7 @@ fun MenuComponent() {
                     modifier = Modifier.fillMaxWidth(),
                     text = "点歌",
                     textAlign = TextAlign.Center,
-                    fontSize = 8.sp
+                    fontSize = btnDescFontSize
                 )
             }
         }
@@ -84,7 +87,7 @@ fun MenuComponent() {
                 Router.navController.navigate("/setting")
             },
             modifier = Modifier.padding(0.dp, 5.dp)
-                .size(55.dp, 55.dp),
+                .size(btnSize),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent
             )
@@ -100,7 +103,7 @@ fun MenuComponent() {
                     modifier = Modifier.fillMaxWidth(),
                     text = "设置",
                     textAlign = TextAlign.Center,
-                    fontSize = 8.sp
+                    fontSize = btnDescFontSize
                 )
             }
         }
