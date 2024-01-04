@@ -1,14 +1,13 @@
 package ski.mashiro.page
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ski.mashiro.router.Router
 import ski.mashiro.component.MenuComponent
+import ski.mashiro.router.Router
 
 /**
  * @author mashirot
