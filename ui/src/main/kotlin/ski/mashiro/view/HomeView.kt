@@ -34,9 +34,10 @@ fun HomeView() {
             Text("Music Waiting List")
 
             val idxWeight = 0.1F
-            val musicNameWeight = 0.45F
-            val singerWeight = 0.25F
-            val bookingUsernameWeight = 0.2F
+            val musicNameWeight = 0.3F
+            val singerWeight = 0.20F
+            val durationWeight = 0.15F
+            val bookingUsernameWeight = 0.25F
             val colFontSize = 14.sp
             val colHorizontalPadding = 2.dp
             val colVerticalPadding = 4.dp
@@ -48,19 +49,51 @@ fun HomeView() {
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         TableCell("序号", idxWeight)
-                        TableCell("歌曲名", musicNameWeight)
+                        TableCell("歌名", musicNameWeight)
                         TableCell("歌手", singerWeight)
-                        TableCell("点歌人", bookingUsernameWeight)
+                        TableCell("时长", durationWeight)
+                        TableCell("用户", bookingUsernameWeight)
                     }
                     Divider(Modifier.padding(2.dp, 1.dp))
                 }
                 itemsIndexed(GlobalBean.musicList) { idx, pair ->
                     val (username, music) = pair
                     Row(Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
-                        TableCell(text = idx.toString(), idxWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
-                        TableCell(text = music.name, musicNameWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
-                        TableCell(text = music.singer, singerWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
-                        TableCell(text = username, bookingUsernameWeight, colHorizontalPadding, colVerticalPadding, colFontSize)
+                        TableCell(
+                            text = idx.plus(1).toString(),
+                            idxWeight,
+                            colHorizontalPadding,
+                            colVerticalPadding,
+                            colFontSize
+                        )
+                        TableCell(
+                            text = music.name,
+                            musicNameWeight,
+                            colHorizontalPadding,
+                            colVerticalPadding,
+                            colFontSize
+                        )
+                        TableCell(
+                            text = music.singer,
+                            singerWeight,
+                            colHorizontalPadding,
+                            colVerticalPadding,
+                            colFontSize
+                        )
+                        TableCell(
+                            text = music.duration,
+                            durationWeight,
+                            colHorizontalPadding,
+                            colVerticalPadding,
+                            colFontSize
+                        )
+                        TableCell(
+                            text = username,
+                            bookingUsernameWeight,
+                            colHorizontalPadding,
+                            colVerticalPadding,
+                            colFontSize
+                        )
                     }
                 }
             }
