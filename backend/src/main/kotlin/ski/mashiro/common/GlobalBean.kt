@@ -1,6 +1,9 @@
 package ski.mashiro.common
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -26,5 +29,5 @@ object GlobalBean {
     lateinit var uidCache: Cache<Long, Long>
     lateinit var musicCache: Cache<Long, NeteaseCloudMusic>
     val musicList = mutableStateListOf<Pair<String, NeteaseCloudMusic>>()
-    var webSocket: WebSocket? = null
+    var webSocket by mutableStateOf<WebSocket?>(null)
 }
