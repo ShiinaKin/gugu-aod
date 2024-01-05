@@ -91,4 +91,12 @@ object WebSocketServiceImpl : WebSocketService {
             println("已有线程正在尝试重连")
         }
     }
+
+    override fun disconnect2Room() {
+        if (webSocket == null) {
+            return
+        }
+        webSocket!!.close(1008, "Manual Close")
+        webSocket = null
+    }
 }

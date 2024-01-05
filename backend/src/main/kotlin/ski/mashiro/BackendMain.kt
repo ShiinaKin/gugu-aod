@@ -37,6 +37,7 @@ object BackendMain {
             medalLevel: 1
             eachUserCoolDown: "10s"
             eachSongCoolDown: "10s"
+            waitListMaxSize: 100
         """.trimIndent(),
             SongRequestConfig::class.java
         )
@@ -48,5 +49,7 @@ object BackendMain {
     }
 
     fun connect2Room() = WebSocketServiceImpl.connect2Room()
+
+    fun disconnect2Room() = WebSocketServiceImpl.disconnect2Room()
 }
 

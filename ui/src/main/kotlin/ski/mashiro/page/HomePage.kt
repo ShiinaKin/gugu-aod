@@ -24,7 +24,6 @@ fun HomePage() {
         Box(
             modifier = Modifier.padding(10.dp)
                 .fillMaxSize()
-//                .border(1.5.dp, color = Color.Green)
         ) {
             Router.navController = Router.initNavController()
         }
