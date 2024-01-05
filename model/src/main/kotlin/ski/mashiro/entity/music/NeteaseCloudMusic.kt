@@ -20,11 +20,11 @@ data class NeteaseCloudMusic(
         duration: Long,
         coverImgUrl: String?,
         url: String?
-    ): this(
+    ) : this(
         id,
         name,
         singer,
-        DurationFormatUtils.formatDuration(duration, "HH:mm:ss"),
+        DurationFormatUtils.formatDuration(duration, "mm:ss"),
         coverImgUrl,
         url,
     )

@@ -26,8 +26,8 @@ fun PlayListComponent() {
 
     val idxWeight = 0.05F
     val musicNameWeight = 0.35F
-    val singerWeight = 0.20F
-    val durationWeight = 0.15F
+    val singerWeight = 0.25F
+    val durationWeight = 0.1F
     val bookingUsernameWeight = 0.25F
     val colFontSize = 14.sp
     val colHorizontalPadding = 2.dp
