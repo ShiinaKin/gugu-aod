@@ -94,9 +94,10 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         if (!getSongStatusById(music.id)) {
             throw NeteaseCouldMusicException("歌曲无法播放")
         }
+        val level = "exhigh"
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
         val urlReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/url?id=${music.id}")
+            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/url/v1?id=${music.id}&level=$level")
             .build()
         var json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(urlReq).execute().run {
