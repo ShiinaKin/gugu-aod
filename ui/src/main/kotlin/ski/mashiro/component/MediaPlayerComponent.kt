@@ -1,13 +1,14 @@
 package ski.mashiro.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.*
@@ -17,10 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import uk.co.caprica.vlcj.player.component.AudioPlayerComponent
+import ski.mashiro.component.player.GuGuMediaPlayerController
+import kotlin.math.roundToInt
 
 /**
  * @author mashirot
@@ -28,10 +31,13 @@ import uk.co.caprica.vlcj.player.component.AudioPlayerComponent
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AudioPlayerComponent() {
+fun MediaPlayerComponent() {
 
-    val audioPlayer = remember { AudioPlayerComponent() }
-    var isPlaying by remember { mutableStateOf(false) }
+    var musicStatus by remember { mutableStateOf(false) }
+
+    LaunchedEffect(GuGuMediaPlayerController.hasMusic()) {
+        musicStatus = GuGuMediaPlayerController.hasMusic()
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -41,18 +47,43 @@ fun AudioPlayerComponent() {
         Box(
             modifier = Modifier.size(100.dp)
         ) {
-            AsyncImage(
-                load = { loadImageBitmap("https://p2.music.126.net/78Chlbwl9fiH8WTsw3arxg==/109951163443253139.jpg") },
-                painterFor = { remember { BitmapPainter(it) } },
-                contentDescription = "musicCoverImg",
-                modifier = Modifier.fillMaxSize()
-            )
+            if (musicStatus) {
+                runCatching {
+                    AsyncImage(
+                        load = { loadImageBitmap(GuGuMediaPlayerController.curMusicInfo!!.second.coverImgUrl!!) },
+                        painterFor = { remember { BitmapPainter(it) } },
+                        contentDescription = "musicCoverImg",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }.getOrElse {
+                    Icon(
+                        painter = painterResource("icon/album.svg"),
+                        contentDescription = "defaultMusicCoverImg",
+                        modifier = Modifier.fillMaxSize(),
+                        tint = Color.DarkGray
+                    )
+                    println("歌曲: ${GuGuMediaPlayerController.curMusicInfo!!.second.name} 封面图获取失败")
+                }
+            } else {
+                Icon(
+                    painter = painterResource("icon/album.svg"),
+                    contentDescription = "defaultMusicCoverImg",
+                    modifier = Modifier.fillMaxSize(),
+                    tint = Color.DarkGray
+                )
+            }
         }
+
+        /**
+         * 音频控件
+         */
         Column(
             modifier = Modifier.padding(3.dp, 0.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-
+            /**
+             * 歌曲信息
+             */
             Row(
                 modifier = Modifier.fillMaxWidth()
                     .fillMaxHeight()
@@ -61,11 +92,71 @@ fun AudioPlayerComponent() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("musicName")
-                Text("singer")
-                Text("username")
+                val musicNameModifier = Modifier.weight(0.3F)
+                val musicSingerModifier = Modifier.weight(0.3F).padding(5.dp, 0.dp)
+                val usernameModifier = Modifier.weight(0.3F)
+                if (musicStatus) {
+                    Text(
+                        text = GuGuMediaPlayerController.curMusicInfo!!.second.name,
+                        modifier = musicNameModifier,
+                        textAlign = TextAlign.Start,
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = GuGuMediaPlayerController.curMusicInfo!!.second.singer,
+                        modifier = musicSingerModifier,
+                        textAlign = TextAlign.Start,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = GuGuMediaPlayerController.curMusicInfo!!.first,
+                        modifier = usernameModifier,
+                        textAlign = TextAlign.Start,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                } else {
+                    Text(
+                        text = "暂无歌曲",
+                        modifier = musicNameModifier,
+                        textAlign = TextAlign.Start,
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = "",
+                        textAlign = TextAlign.Start,
+                        modifier = musicSingerModifier,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = "",
+                        modifier = usernameModifier,
+                        textAlign = TextAlign.Start,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
 
+            /**
+             * 进度条控件
+             */
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,14 +165,13 @@ fun AudioPlayerComponent() {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-                val curTime = 0F
-
                 val interactionSource = MutableInteractionSource()
                 Slider(
-                    value = curTime,
+                    value = GuGuMediaPlayerController.progress,
                     onValueChange = {
-
+                        if (musicStatus) {
+                            GuGuMediaPlayerController.jump2Position(it)
+                        }
                     },
                     interactionSource = interactionSource,
                     colors = SliderDefaults.colors(
@@ -106,14 +196,18 @@ fun AudioPlayerComponent() {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "00:00/01:00",
+                        text = if (musicStatus) "${GuGuMediaPlayerController.curTimeStr}/${GuGuMediaPlayerController.durationStr}" else "00:00/00:00",
                         modifier = Modifier.width(56.dp).fillMaxHeight(),
                         fontSize = 10.sp,
                         textAlign = TextAlign.Center
                     )
+
                 }
             }
 
+            /**
+             * 功能控件
+             */
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -122,12 +216,13 @@ fun AudioPlayerComponent() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
+                /**
+                 * 暂停/播放/后一首 控件
+                 */
                 Row(
                     modifier = Modifier
-                        .width(120.dp)
-                        .fillMaxHeight()
-                        .border(2.dp, Color.Black),
+                        .width(80.dp)
+                        .fillMaxHeight(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -135,34 +230,28 @@ fun AudioPlayerComponent() {
                     val btnSize = 32.dp
                     val btnPadding = PaddingValues(0.dp)
                     val iconSize = 20.dp
+                    val btnColor = Color.LightGray
 
                     Button(
                         modifier = Modifier.size(btnSize),
                         contentPadding = btnPadding,
                         onClick = {
-                            println("skip previous")
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource("icon/skip_previous.svg"),
-                            contentDescription = "skip previous",
-                            modifier = Modifier.size(iconSize)
-                        )
-                    }
-                    Button(
-                        modifier = Modifier.size(btnSize),
-                        contentPadding = btnPadding,
-                        onClick = {
-                            if (isPlaying) {
-                                audioPlayer.mediaPlayer().controls().pause()
+                            if (GuGuMediaPlayerController.isPaused()) {
+                                GuGuMediaPlayerController.start()
                             } else {
-                                audioPlayer.mediaPlayer().controls().play()
+                                GuGuMediaPlayerController.pause()
                             }
-                            isPlaying = !isPlaying
                         },
+                        enabled = musicStatus,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = btnColor
+                        )
                     ) {
                         Icon(
-                            painter = if (isPlaying) painterResource("icon/pause.svg") else painterResource("icon/play_arrow.svg"),
+                            painter = if (GuGuMediaPlayerController.isPaused())
+                                painterResource("icon/play_arrow.svg")
+                            else
+                                painterResource("icon/pause.svg"),
                             contentDescription = "play/pause btn",
                             modifier = Modifier.size(iconSize)
                         )
@@ -171,8 +260,12 @@ fun AudioPlayerComponent() {
                         modifier = Modifier.size(btnSize),
                         contentPadding = btnPadding,
                         onClick = {
-                            println("skip next")
-                        }
+                            GuGuMediaPlayerController.playNext()
+                        },
+                        enabled = musicStatus,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = btnColor
+                        )
                     ) {
                         Icon(
                             painter = painterResource("icon/skip_next.svg"),
@@ -180,6 +273,55 @@ fun AudioPlayerComponent() {
                             modifier = Modifier.size(iconSize)
                         )
                     }
+                }
+
+                /**
+                 * 音量控件
+                 */
+                Row(
+                    modifier = Modifier.width(120.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    var volumeStatus by remember { mutableStateOf(true) }
+                    IconButton(
+                        onClick = {
+                            volumeStatus = GuGuMediaPlayerController.mute()
+                        },
+                        modifier = Modifier.size(16.dp)
+                    ) {
+                        Icon(
+                            painter = if (volumeStatus) painterResource("icon/volume_up.svg") else painterResource("icon/volume_off.svg"),
+                            contentDescription = "volumeIcon"
+                        )
+                    }
+
+                    var curVolume by remember { mutableStateOf(0.5F) }
+                    val interactionSource = MutableInteractionSource()
+                    Slider(
+                        value = curVolume,
+                        onValueChange = {
+                            curVolume = it
+                            GuGuMediaPlayerController.setVolume(it.times(100).roundToInt())
+                        },
+                        interactionSource = interactionSource,
+                        colors = SliderDefaults.colors(
+                            activeTrackColor = Color.DarkGray,
+                            inactiveTrackColor = Color.Gray,
+                            thumbColor = Color.DarkGray
+                        ),
+                        thumb = {
+                            SliderDefaults.Thumb(
+                                interactionSource = interactionSource,
+                                thumbSize = DpSize(0.dp, 0.dp),
+                            )
+                        },
+                        modifier = Modifier
+                            .width(100.dp)
+                            .fillMaxHeight(),
+                        enabled = volumeStatus
+                    )
                 }
             }
         }
