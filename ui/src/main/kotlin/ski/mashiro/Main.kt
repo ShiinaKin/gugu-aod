@@ -20,8 +20,8 @@ import java.awt.Dimension
  */
 fun main() = application {
     Window(
-        title = "GuGu-MOD",
-        icon = painterResource("icon.png"),
+        title = "GuGu-AOD",
+        icon = painterResource("icon.ico"),
         state = rememberWindowState(
             width = 500.dp,
             height = 700.dp,

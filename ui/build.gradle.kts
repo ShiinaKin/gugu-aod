@@ -31,6 +31,11 @@ compose.desktop {
             targetFormats(TargetFormat.Exe)
             packageName = "gugu-aod"
             packageVersion = "1.0.0"
+
+            windows {
+                iconFile.set(project.file("src/main/resources/icon.ico"))
+                dirChooser = true
+            }
         }
     }
 }
