@@ -48,8 +48,20 @@ object BackendMain {
             .expireAfterWrite(Duration.parse(GlobalBean.songRequestConfig.eachSongCoolDown).toJavaDuration()).build()
     }
 
-    fun connect2Room() = WebSocketServiceImpl.connect2Room()
+    fun connect2Room() {
+        GlobalBean.MAIN_SCOPE.launch {
+            withContext(Dispatchers.IO) {
+                WebSocketServiceImpl.connect2Room()
+            }
+        }
+    }
 
-    fun disconnect2Room() = WebSocketServiceImpl.disconnect2Room()
+    fun disconnect2Room() {
+        GlobalBean.MAIN_SCOPE.launch {
+            withContext(Dispatchers.IO) {
+                WebSocketServiceImpl.disconnect2Room()
+            }
+        }
+    }
 }
 
