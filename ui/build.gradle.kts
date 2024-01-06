@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation(project(":backend"))
+    implementation(project(":common"))
     implementation(project(":model"))
     implementation(compose.desktop.currentOs)
     implementation(compose.material3)
