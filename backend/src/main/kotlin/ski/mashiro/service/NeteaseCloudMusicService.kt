@@ -13,6 +13,8 @@ interface NeteaseCloudMusicService {
 
     suspend fun getMusicByKeyword(keyword: String): NeteaseCloudMusic
 
+    suspend fun listMusicByKeyword(keyword: String): List<NeteaseCloudMusic>
+
     suspend fun getSongStatusById(songId: Long): Boolean
 
     suspend fun getMusicById(music: NeteaseCloudMusic): NeteaseCloudMusic

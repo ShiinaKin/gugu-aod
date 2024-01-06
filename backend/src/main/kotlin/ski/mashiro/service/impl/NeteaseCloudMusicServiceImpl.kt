@@ -70,24 +70,29 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
             throw NeteaseCouldMusicException("未找到歌曲")
         }
         val music = musics[0] as HashMap<*, *>
-        val artists = music["artists"] as List<*>
-        var singer = ""
-        val iter = artists.iterator()
-        while (iter.hasNext()) {
-            val artist = iter.next() as HashMap<*, *>
-            singer += artist["name"].toString()
-            if (iter.hasNext()) {
-                singer += ", "
+        return trans2MusicEntity(music)
+    }
+
+    override suspend fun listMusicByKeyword(keyword: String): List<NeteaseCloudMusic> {
+        val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val searchReq = RequestBuilderFactory.getReqBuilderWithUA()
+            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/search?keywords=$keyword")
+            .build()
+        val json = withContext(Dispatchers.IO) {
+            okHttpClient.newCall(searchReq).execute().run {
+                body!!.string()
             }
         }
-        return NeteaseCloudMusic(
-            music["id"].toString().toLong(),
-            music["name"] as String,
-            singer,
-            music["duration"].toString().toLong(),
-            null,
-            null
-        )
+        val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
+        val result = respResult["result"] as HashMap<*, *>
+        val musics = result["songs"] as List<*>
+        if (musics.isEmpty()) {
+            throw NeteaseCouldMusicException("未找到歌曲")
+        }
+        return musics.map {
+            val music = it as HashMap<*, *>
+            trans2MusicEntity(music)
+        }
     }
 
     override suspend fun getMusicById(music: NeteaseCloudMusic): NeteaseCloudMusic {
@@ -150,6 +155,27 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         return respResult["account"] != null
+    }
+
+    private fun trans2MusicEntity(music: Map<*, *>): NeteaseCloudMusic {
+        val artists = music["artists"] as List<*>
+        var singer = ""
+        val iter = artists.iterator()
+        while (iter.hasNext()) {
+            val artist = iter.next() as HashMap<*, *>
+            singer += artist["name"].toString()
+            if (iter.hasNext()) {
+                singer += ", "
+            }
+        }
+        return NeteaseCloudMusic(
+            music["id"].toString().toLong(),
+            music["name"] as String,
+            singer,
+            music["duration"].toString().toLong(),
+            null,
+            null
+        )
     }
 
 }
