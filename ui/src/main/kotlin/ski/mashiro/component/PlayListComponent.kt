@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,8 +21,6 @@ import ski.mashiro.common.GlobalBean
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlayListComponent() {
-    Text("Music Waiting List")
-
     val idxWeight = 0.05F
     val musicNameWeight = 0.35F
     val singerWeight = 0.25F
@@ -76,7 +73,7 @@ fun PlayListComponent() {
                     colFontSize
                 )
                 TableCell(
-                    text = music.duration,
+                    text = music.durationStr,
                     durationWeight,
                     colHorizontalPadding,
                     colVerticalPadding,

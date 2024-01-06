@@ -125,10 +125,8 @@ fun MenuComponent() {
             Button(
                 onClick = {
                     if (connectStatus.first) {
-                        println("disconnect")
                         BackendMain.disconnect2Room()
                     } else {
-                        println("connect")
                         BackendMain.connect2Room()
                     }
                 },
