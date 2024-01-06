@@ -15,6 +15,7 @@ import ski.mashiro.entity.config.NeteaseCloudMusicConfig
 import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
 import ski.mashiro.entity.music.NeteaseCloudMusic
+import java.io.File
 
 /**
  * @author mashirot
@@ -23,7 +24,8 @@ object GlobalBean {
     val JSON_MAPPER = JsonMapper().registerKotlinModule()
     val YAML_MAPPER = YAMLMapper().registerKotlinModule()
     val IO_SCOPE = CoroutineScope(Dispatchers.IO)
-    lateinit var config: Config
+    private val RESOURCES_FOLDER = File(System.getProperty("compose.application.resources.dir"))
+    val CONFIG_FOLDER = File(RESOURCES_FOLDER, "config")
     lateinit var roomConfig: RoomConfig
     lateinit var neteaseCloudMusicConfig: NeteaseCloudMusicConfig
     lateinit var songRequestConfig: SongRequestConfig

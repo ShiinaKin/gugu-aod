@@ -17,5 +17,7 @@ dependencies {
     implementation("org.brotli:dec:0.1.2")
     // https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation("commons-io:commons-io:2.15.1")
     implementation(compose.desktop.currentOs)
 }

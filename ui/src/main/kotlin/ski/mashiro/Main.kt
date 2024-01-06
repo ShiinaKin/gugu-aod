@@ -27,7 +27,10 @@ fun main() = application {
             height = 700.dp,
             position = WindowPosition(Alignment.Center)
         ),
-        onCloseRequest = ::exitApplication
+        onCloseRequest = {
+            BackendMain.onClose()
+            exitApplication()
+        }
     ) {
         window.minimumSize = Dimension(600, 400)
         BackendMain.init()
