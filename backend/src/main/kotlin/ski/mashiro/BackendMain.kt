@@ -1,6 +1,7 @@
 package ski.mashiro
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import kotlinx.coroutines.launch
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.entity.config.Config
 import ski.mashiro.entity.config.NeteaseCloudMusicConfig
@@ -49,18 +50,14 @@ object BackendMain {
     }
 
     fun connect2Room() {
-        GlobalBean.MAIN_SCOPE.launch {
-            withContext(Dispatchers.IO) {
-                WebSocketServiceImpl.connect2Room()
-            }
+        GlobalBean.IO_SCOPE.launch {
+            WebSocketServiceImpl.connect2Room()
         }
     }
 
     fun disconnect2Room() {
-        GlobalBean.MAIN_SCOPE.launch {
-            withContext(Dispatchers.IO) {
-                WebSocketServiceImpl.disconnect2Room()
-            }
+        GlobalBean.IO_SCOPE.launch {
+            WebSocketServiceImpl.disconnect2Room()
         }
     }
 }

@@ -28,7 +28,7 @@ class WebSocketListener : WebSocketListener() {
         HeartbeatTimer.stop()
         webSocket.cancel()
         GlobalBean.webSocket = null
-        GlobalBean.MAIN_SCOPE.launch {
+        GlobalBean.IO_SCOPE.launch {
             WebSocketServiceImpl.reconnect()
         }
     }

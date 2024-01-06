@@ -2,7 +2,7 @@ package ski.mashiro.handler
 
 import kotlinx.coroutines.launch
 import ski.mashiro.common.GlobalBean
-import ski.mashiro.common.GlobalBean.MAIN_SCOPE
+import ski.mashiro.common.GlobalBean.IO_SCOPE
 import ski.mashiro.common.GlobalBean.config
 import ski.mashiro.common.GlobalBean.songRequestConfig
 import ski.mashiro.const.CometConsts.INFO_CONTENT_IDX
@@ -36,7 +36,7 @@ object CometHandler {
         if (!comet.content.startsWith(songRequestConfig.prefix) || comet.content[2] != ' ') {
             return
         }
-        MAIN_SCOPE.launch {
+        IO_SCOPE.launch {
             songRequest(comet)
         }
     }
