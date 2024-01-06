@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
 import ski.mashiro.common.GlobalBean.config
 import ski.mashiro.common.GlobalBean.webSocket
+import ski.mashiro.const.LockConsts
 import ski.mashiro.exception.WebSocketException
 import ski.mashiro.factory.OkHttpClientFactory
 import ski.mashiro.factory.RequestBuilderFactory
@@ -68,7 +69,7 @@ object WebSocketServiceImpl : WebSocketService {
             return
         }
         withContext(Dispatchers.IO) {
-            if (LockUtils.tryLock()) {
+            if (LockUtils.tryLock(LockConsts.RECONNECT_LOCK)) {
                 try {
                     for (i in 0 until MAX_RECONNECT_NUM) {
                         println("尝试重连, 次数: ${i + 1}")
@@ -84,7 +85,7 @@ object WebSocketServiceImpl : WebSocketService {
                         return@withContext
                     }
                 } finally {
-                    LockUtils.releaseLock()
+                    LockUtils.releaseLock(LockConsts.RECONNECT_LOCK)
                 }
                 return@withContext
             }

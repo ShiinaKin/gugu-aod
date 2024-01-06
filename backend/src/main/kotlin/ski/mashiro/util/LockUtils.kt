@@ -1,16 +1,24 @@
 package ski.mashiro.util
 
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author mashirot
  */
 object LockUtils {
 
-    private val lock = ReentrantLock()
+    private val concurrentMap = ConcurrentHashMap<String, Byte>(2)
 
-    fun tryLock() = lock.tryLock()
+    fun tryLock(key: String): Boolean {
+        if (concurrentMap.containsKey(key)) {
+            return false
+        }
+        concurrentMap[key] = 1
+        return true
+    }
 
-    fun releaseLock() = lock.unlock()
+    fun releaseLock(key: String) {
+        concurrentMap.remove(key)
+    }
 
 }
