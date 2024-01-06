@@ -1,6 +1,5 @@
 package ski.mashiro.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -42,7 +41,6 @@ fun MediaPlayerComponent() {
     Row(
         modifier = Modifier.fillMaxWidth()
             .height(100.dp)
-            .border(2.dp, Color.Yellow)
     ) {
         Box(
             modifier = Modifier.size(100.dp)
@@ -117,7 +115,7 @@ fun MediaPlayerComponent() {
                     Text(
                         text = GuGuMediaPlayerController.curMusicInfo!!.first,
                         modifier = usernameModifier,
-                        textAlign = TextAlign.Start,
+                        textAlign = TextAlign.End,
                         fontSize = 14.sp,
                         maxLines = 1,
                         softWrap = false,
@@ -145,7 +143,7 @@ fun MediaPlayerComponent() {
                     Text(
                         text = "",
                         modifier = usernameModifier,
-                        textAlign = TextAlign.Start,
+                        textAlign = TextAlign.End,
                         fontSize = 14.sp,
                         maxLines = 1,
                         softWrap = false,
