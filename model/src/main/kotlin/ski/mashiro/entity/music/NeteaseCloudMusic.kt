@@ -9,7 +9,8 @@ data class NeteaseCloudMusic(
     val id: Long,
     val name: String,
     val singer: String,
-    val duration: String,
+    val duration: Long,
+    val durationStr: String,
     var coverImgUrl: String?,
     var url: String?
 ) {
@@ -24,6 +25,7 @@ data class NeteaseCloudMusic(
         id,
         name,
         singer,
+        duration,
         DurationFormatUtils.formatDuration(duration, "mm:ss"),
         coverImgUrl,
         url,
