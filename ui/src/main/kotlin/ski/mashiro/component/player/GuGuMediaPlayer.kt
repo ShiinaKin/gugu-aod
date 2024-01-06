@@ -44,11 +44,18 @@ class GuGuMediaPlayer {
                     updateProgress()
                 }
 
+                override fun stopped(mediaPlayer: MediaPlayer?) {
+                    super.stopped(mediaPlayer)
+                    setStatus(PlayerStatusEnum.STOPPED)
+                    setStatus(PlayerStatusEnum.IDLE)
+                }
+
                 override fun error(mediaPlayer: MediaPlayer?) {
                     super.error(mediaPlayer)
                     println("mediaPlayer error")
                 }
             })
+            audio().setVolume(50)
         }
     }
 
