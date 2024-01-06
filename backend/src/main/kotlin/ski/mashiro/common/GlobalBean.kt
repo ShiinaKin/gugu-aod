@@ -11,8 +11,8 @@ import com.github.benmanes.caffeine.cache.Cache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import okhttp3.WebSocket
-import ski.mashiro.entity.config.Config
 import ski.mashiro.entity.config.NeteaseCloudMusicConfig
+import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
 import ski.mashiro.entity.music.NeteaseCloudMusic
 
@@ -24,6 +24,7 @@ object GlobalBean {
     val YAML_MAPPER = YAMLMapper().registerKotlinModule()
     val IO_SCOPE = CoroutineScope(Dispatchers.IO)
     lateinit var config: Config
+    lateinit var roomConfig: RoomConfig
     lateinit var neteaseCloudMusicConfig: NeteaseCloudMusicConfig
     lateinit var songRequestConfig: SongRequestConfig
     lateinit var uidCache: Cache<Long, Long>

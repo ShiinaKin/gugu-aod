@@ -3,7 +3,7 @@ package ski.mashiro.handler
 import kotlinx.coroutines.launch
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.common.GlobalBean.IO_SCOPE
-import ski.mashiro.common.GlobalBean.config
+import ski.mashiro.common.GlobalBean.roomConfig
 import ski.mashiro.common.GlobalBean.songRequestConfig
 import ski.mashiro.const.CometConsts.INFO_CONTENT_IDX
 import ski.mashiro.const.CometConsts.INFO_MEDAL_IDX
@@ -84,7 +84,7 @@ object CometHandler {
         val uid = user[USER_UID_IDX].toString().toLong()
         val username = user[USER_USERNAME_IDX] as String
         val isRoomManager = user[USER_IS_ROOM_MANAGER_IDX] == 1
-        val isAnchorman = uid == config.anchormanUID
+        val isAnchorman = uid == roomConfig.anchormanUID
 
         val status = info[INFO_STATUS_IDX] as List<*>
         val timestamp = status[TIMESTAMP_IDX] as Long

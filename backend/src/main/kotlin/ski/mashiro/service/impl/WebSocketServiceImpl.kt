@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
-import ski.mashiro.common.GlobalBean.config
+import ski.mashiro.common.GlobalBean.roomConfig
 import ski.mashiro.common.GlobalBean.webSocket
 import ski.mashiro.const.LockConsts
 import ski.mashiro.exception.WebSocketException
@@ -25,25 +25,25 @@ object WebSocketServiceImpl : WebSocketService {
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
 
         val roomRequest = RequestBuilderFactory.getReqBuilderWithBiliCookieAndUA()
-            .url("https://api.live.bilibili.com/room/v1/Room/room_init?id=${config.roomId}")
+            .url("https://api.live.bilibili.com/room/v1/Room/room_init?id=${roomConfig.roomId}")
             .build()
         runCatching {
             val roomData = okHttpClient.newCall(roomRequest).execute().run {
                 val map = JSON_MAPPER.readValue(body!!.string(), HashMap::class.java)
                 map["data"] as HashMap<*, *>
             }
-            config.roomId = roomData["room_id"].toString().toLong()
-            config.anchormanUID = roomData["uid"].toString().toLong()
+            roomConfig.roomId = roomData["room_id"].toString().toLong()
+            roomConfig.anchormanUID = roomData["uid"].toString().toLong()
         }.getOrElse {
             println("roomReq发生错误, msg: ${it.message}")
             throw WebSocketException("roomReq发生错误")
         }
 
         val keyRequest = RequestBuilderFactory.getReqBuilderWithBiliCookieAndUA()
-            .url("https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id=${config.roomId}&platform=pc&player=web")
+            .url("https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id=${roomConfig.roomId}&platform=pc&player=web")
             .build()
         runCatching {
-            config.key = okHttpClient.newCall(keyRequest).execute().run {
+            roomConfig.key = okHttpClient.newCall(keyRequest).execute().run {
                 val map = JSON_MAPPER.readValue(body!!.string(), HashMap::class.java)
                 val data = map["data"] as HashMap<*, *>
                 data["token"] as String

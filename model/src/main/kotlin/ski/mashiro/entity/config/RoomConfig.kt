@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 /**
  * @author mashirot
  */
-data class Config(
+data class RoomConfig(
     var roomId: Long,
     @JsonIgnore
     var anchormanUID: Long?,
@@ -15,4 +15,17 @@ data class Config(
     var key: String?,
     val cookie: String,
     val ua: String = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-)
+) {
+    constructor(
+        roomId: Long,
+        uid: Long,
+    ) : this(
+        roomId,
+        null,
+        uid,
+        "850221AA-6657-6657-6657-91043281097552522infoc",
+        "",
+        "",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    )
+}

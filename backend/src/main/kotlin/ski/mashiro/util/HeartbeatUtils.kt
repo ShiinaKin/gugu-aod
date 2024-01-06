@@ -3,7 +3,7 @@ package ski.mashiro.util
 import okio.ByteString
 import org.apache.commons.lang3.StringUtils
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
-import ski.mashiro.common.GlobalBean.config
+import ski.mashiro.common.GlobalBean.roomConfig
 import ski.mashiro.const.DataHeaderConsts
 import ski.mashiro.entity.bilibili.AuthorizeBody
 import ski.mashiro.entity.bilibili.DataHeader
@@ -15,15 +15,15 @@ object HeartbeatUtils {
 
     fun generateAuthorizeBag(): ByteString {
         val authorizeBody =
-            if (StringUtils.isNotBlank(config.cookie)) {
+            if (StringUtils.isNotBlank(roomConfig.cookie)) {
                 AuthorizeBody(
-                    config.uid,
-                    config.roomId,
-                    config.buvId,
-                    config.key
+                    roomConfig.uid,
+                    roomConfig.roomId,
+                    roomConfig.buvId,
+                    roomConfig.key
                 )
             } else {
-                AuthorizeBody(config.roomId)
+                AuthorizeBody(roomConfig.roomId)
             }
         val body = JSON_MAPPER.writeValueAsBytes(authorizeBody)
         val totalLength = 16 + body.size
