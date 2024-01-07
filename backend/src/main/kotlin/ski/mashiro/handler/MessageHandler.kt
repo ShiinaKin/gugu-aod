@@ -1,6 +1,8 @@
 package ski.mashiro.handler
 
 import okio.ByteString
+import ski.mashiro.annotation.Logger
+import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
 import ski.mashiro.const.DataCmdConsts
 import ski.mashiro.const.DataHeaderConsts
@@ -12,6 +14,7 @@ import java.util.*
 /**
  * @author mashirot
  */
+@Logger
 object MessageHandler {
 
     fun handle(byteString: ByteString) {
@@ -37,17 +40,16 @@ object MessageHandler {
         val bodyByteArray = byteArray.copyOfRange(HEADER_LENGTH_INT, byteArray.size)
 
         if (header.protocolVersion == DataHeaderConsts.UNCOMPRESSED_PROTOCOL) {
-            // println(String(bodyByteArray))
             return emptyList()
         }
 
         if (header.protocolVersion == DataHeaderConsts.HEARTBEAT_PROTOCOL) {
             if (header.dataType == DataHeaderConsts.SERVER_AUTHORIZE) {
-                println("Authorized!!!")
+                log.debug { "Authorized!!!" }
                 return emptyList()
             }
             if (header.dataType == DataHeaderConsts.SERVER_HEARTBEAT) {
-                println("Pong!!!")
+                log.debug { "Pong!!!" }
                 return emptyList()
             }
         }

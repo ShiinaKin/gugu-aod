@@ -1,6 +1,8 @@
 package ski.mashiro.file
 
 import org.apache.commons.io.FileUtils
+import ski.mashiro.annotation.Logger
+import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.common.GlobalBean.CONFIG_FOLDER
 import ski.mashiro.common.GlobalBean.YAML_MAPPER
@@ -14,6 +16,7 @@ import kotlin.text.Charsets.UTF_8
  * @author mashirot
  * 2024/1/6 20:02
  */
+@Logger
 object ConfigFileOperation {
     private val roomConfigFile = File(CONFIG_FOLDER, "roomConfig.yml")
     private val songRequestConfigFile = File(CONFIG_FOLDER, "songRequestConfig.yml")
@@ -41,31 +44,32 @@ object ConfigFileOperation {
             FileUtils.writeStringToFile(roomConfigFile, roomConfigYaml, UTF_8)
             FileUtils.writeStringToFile(songRequestConfigFile, songRequestConfigYaml, UTF_8)
             FileUtils.writeStringToFile(neteaseCloudMusicConfigFile, neteaseCloudMusicConfigYaml, UTF_8)
+            log.debug { "保存配置成功" }
         }.getOrElse {
-            println("保存文件失败, $it")
+            log.warn { "保存配置失败, $it" }
         }
     }
 
     private fun initConfig() {
         if (!CONFIG_FOLDER.exists()) {
             if (!CONFIG_FOLDER.mkdirs()) {
-                println("创建config文件夹失败")
+                log.warn { "创建config文件夹失败" }
                 return
             }
         }
         if (!roomConfigFile.exists()) {
             if (!initRoomConfig()) {
-                println("创建roomConfig文件失败")
+                log.warn { "创建roomConfig文件失败" }
             }
         }
         if (!songRequestConfigFile.exists()) {
             if (!initSongRequestConfig()) {
-                println("创建songRequestConfig文件失败")
+                log.warn { "创建songRequestConfig文件失败" }
             }
         }
         if (!neteaseCloudMusicConfigFile.exists()) {
             if (!initNeteaseCloudMusicConfig()) {
-                println("创建neteaseCloudMusicConfig文件失败")
+                log.warn { "创建neteaseCloudMusicConfig文件失败" }
             }
         }
     }
