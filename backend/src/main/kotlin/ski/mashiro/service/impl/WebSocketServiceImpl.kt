@@ -3,6 +3,8 @@ package ski.mashiro.service.impl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import ski.mashiro.annotation.Logger
+import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
 import ski.mashiro.common.GlobalBean.roomConfig
 import ski.mashiro.common.GlobalBean.webSocket
@@ -17,6 +19,7 @@ import ski.mashiro.util.LockUtils
 /**
  * @author mashirot
  */
+@Logger
 object WebSocketServiceImpl : WebSocketService {
 
     private const val MAX_RECONNECT_NUM = 5
@@ -35,7 +38,7 @@ object WebSocketServiceImpl : WebSocketService {
             roomConfig.roomId = roomData["room_id"].toString().toLong()
             roomConfig.anchormanUID = roomData["uid"].toString().toLong()
         }.getOrElse {
-            println("roomReq发生错误, msg: ${it.message}")
+            log.warn { "roomReq发生错误, msg: ${it.message}" }
             throw WebSocketException("roomReq发生错误")
         }
 
@@ -49,7 +52,7 @@ object WebSocketServiceImpl : WebSocketService {
                 data["token"] as String
             }
         }.getOrElse {
-            println("keyReq发生错误, msg: ${it.message}")
+            log.warn { "keyReq发生错误, msg: ${it.message}" }
             throw WebSocketException("keyReq发生错误")
         }
 
@@ -59,7 +62,7 @@ object WebSocketServiceImpl : WebSocketService {
         runCatching {
             webSocket = okHttpClient.newWebSocket(wsRequest, WebSocketListener())
         }.getOrElse {
-            println("wsReq发生错误, msg: ${it.message}")
+            log.warn { "wsReq发生错误, msg: ${it.message}" }
             throw WebSocketException("wsReq发生错误")
         }
     }
@@ -72,16 +75,16 @@ object WebSocketServiceImpl : WebSocketService {
             if (LockUtils.tryLock(LockConsts.RECONNECT_LOCK)) {
                 try {
                     for (i in 0 until MAX_RECONNECT_NUM) {
-                        println("尝试重连, 次数: ${i + 1}")
+                        log.info { "尝试重连, 次数: ${i + 1}" }
                         connect2Room()
                         if (webSocket != null) {
-                            println("重连成功")
+                            log.info { "重连成功" }
                             return@withContext
                         }
                         delay(kotlin.time.Duration.parse("5s"))
                     }
                     if (webSocket == null) {
-                        println("已达最大重连次数, 重连失败")
+                        log.info { "已达最大重连次数, 重连失败" }
                         return@withContext
                     }
                 } finally {
@@ -89,7 +92,7 @@ object WebSocketServiceImpl : WebSocketService {
                 }
                 return@withContext
             }
-            println("已有线程正在尝试重连")
+            log.info { "已有线程正在尝试重连" }
         }
     }
 
