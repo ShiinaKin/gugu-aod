@@ -1,6 +1,9 @@
 package ski.mashiro.handler
 
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.StringUtils
+import ski.mashiro.annotation.Logger
+import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.common.GlobalBean.IO_SCOPE
 import ski.mashiro.common.GlobalBean.roomConfig
@@ -25,6 +28,7 @@ import java.util.*
 /**
  * @author mashirot
  */
+@Logger
 object CometHandler {
 
     fun handle(map: HashMap<*, *>) {
@@ -33,7 +37,7 @@ object CometHandler {
     }
 
     private fun parseComet(comet: Comet) {
-        if (!comet.content.startsWith(songRequestConfig.prefix) || comet.content[2] != ' ') {
+        if (!comet.content.startsWith(songRequestConfig.prefix) || comet.content[2] != ' ' || comet.content.length < 4) {
             return
         }
         IO_SCOPE.launch {
@@ -43,37 +47,45 @@ object CometHandler {
 
     private suspend fun songRequest(comet: Comet) {
         if (GlobalBean.musicList.size >= songRequestConfig.waitListMaxSize) {
+            log.debug { "musicList reached maximum size" }
             return
         }
         val isAdmin = comet.isAnchorman || comet.isRoomManager
         if (!isAdmin) {
             if (Objects.nonNull(songRequestConfig.medalName)) {
-                if (comet.medalName != songRequestConfig.medalName) {
+                if (Objects.isNull(comet.medalName) || comet.medalName != songRequestConfig.medalName) {
+                    log.debug { "cometSender: ${comet.username} wearing the wrong medal" }
                     return
                 }
                 if (Objects.isNull(comet.medalLevel) || comet.medalLevel!! < songRequestConfig.medalLevel!!) {
+                    log.debug { "cometSender: ${comet.username} not reaching the required level for the medal" }
                     return
                 }
             }
         }
         if (Objects.nonNull(GlobalBean.uidCache.getIfPresent(comet.uid))) {
+            log.debug { "cometSender: ${comet.username} is cooling" }
             return
         }
         val keyword = comet.content.substring(3)
+        if (StringUtils.isBlank(keyword)) {
+            return
+        }
         runCatching {
             val musicWithOutUrl = NeteaseCloudMusicServiceImpl.getMusicByKeyword(keyword)
             if (Objects.nonNull(GlobalBean.musicCache.getIfPresent(musicWithOutUrl.id))) {
+                log.debug { "musicId: ${musicWithOutUrl.id} is cooling, musicName: ${musicWithOutUrl.name}" }
                 return
             }
             GlobalBean.musicList.add(comet.username to musicWithOutUrl)
+            log.debug { "${comet.username} booking success, musicName: ${musicWithOutUrl.name}" }
             if (isAdmin) {
                 return
             }
             GlobalBean.uidCache.put(comet.uid, comet.uid)
             GlobalBean.musicCache.put(musicWithOutUrl.id, musicWithOutUrl)
         }.getOrElse {
-            // TODO remind
-            println(it.message)
+            log.warn { "getMusic Failed by keyword: $keyword, cometSender: ${comet.username}, completeContent: ${comet.content}" }
         }
     }
 
