@@ -46,22 +46,20 @@ fun MediaPlayerComponent() {
             modifier = Modifier.size(100.dp)
         ) {
             if (musicStatus) {
-                runCatching {
-                    AsyncImage(
-                        load = { loadImageBitmap(GuGuMediaPlayerController.curMusicInfo!!.second.coverImgUrl!!) },
-                        painterFor = { remember { BitmapPainter(it) } },
-                        contentDescription = "musicCoverImg",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }.getOrElse {
-                    Icon(
-                        painter = painterResource("icon/album.svg"),
-                        contentDescription = "defaultMusicCoverImg",
-                        modifier = Modifier.fillMaxSize(),
-                        tint = Color.DarkGray
-                    )
-                    println("歌曲: ${GuGuMediaPlayerController.curMusicInfo!!.second.name} 封面图获取失败")
-                }
+                AsyncImage(
+                    load = {
+                        try {
+                            loadImageBitmap(GuGuMediaPlayerController.curMusicInfo?.second?.coverImgUrl!!)
+                        } catch (e: Exception) {
+                            println(e)
+                            println("歌曲: ${GuGuMediaPlayerController.curMusicInfo?.second} 封面图获取失败")
+                            loadImageBitmap("https://sm.ms/image/BEOaPfZsXLh9H41")
+                        }
+                    },
+                    painterFor = { remember { BitmapPainter(it) } },
+                    contentDescription = "musicCoverImg",
+                    modifier = Modifier.fillMaxSize()
+                )
             } else {
                 Icon(
                     painter = painterResource("icon/album.svg"),
@@ -258,7 +256,7 @@ fun MediaPlayerComponent() {
                         modifier = Modifier.size(btnSize),
                         contentPadding = btnPadding,
                         onClick = {
-                            GuGuMediaPlayerController.playNext()
+                            GuGuMediaPlayerController.skipNext()
                         },
                         enabled = musicStatus,
                         colors = ButtonDefaults.buttonColors(

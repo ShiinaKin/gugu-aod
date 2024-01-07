@@ -2,6 +2,8 @@ package ski.mashiro.component.player
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import ski.mashiro.annotation.Logger
+import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.const.LockConsts
 import ski.mashiro.entity.music.NeteaseCloudMusic
@@ -15,6 +17,7 @@ import uk.co.caprica.vlcj.player.component.AudioPlayerComponent
  * @author mashirot
  * 2024/1/5 21:33
  */
+@Logger
 class GuGuMediaPlayer {
     private var mediaPlayer: MediaPlayer? = null
     private var music: NeteaseCloudMusic? = null
@@ -52,7 +55,7 @@ class GuGuMediaPlayer {
 
                 override fun error(mediaPlayer: MediaPlayer?) {
                     super.error(mediaPlayer)
-                    println("mediaPlayer error")
+                    log.warn { "mediaPlayer error" }
                 }
             })
             audio().setVolume(50)
@@ -72,8 +75,10 @@ class GuGuMediaPlayer {
         job = GlobalBean.IO_SCOPE.launch {
             try {
                 mediaPlayer?.media()?.play(music?.url)
+                log.debug { "playMusic: ${music?.name}" }
             } finally {
                 LockUtils.releaseLock(LockConsts.PLAYING_LOCK)
+                log.debug { "${music?.name} play releaseLock" }
             }
         }
     }

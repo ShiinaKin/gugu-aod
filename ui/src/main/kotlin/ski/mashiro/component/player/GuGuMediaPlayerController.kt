@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.time.DurationFormatUtils
+import ski.mashiro.annotation.Logger
+import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.const.LockConsts
 import ski.mashiro.entity.music.NeteaseCloudMusic
@@ -16,6 +18,7 @@ import ski.mashiro.util.LockUtils
  * @author mashirot
  * 2024/1/5 22:30
  */
+@Logger
 object GuGuMediaPlayerController : GuGuMediaPlayerListener {
     private const val INIT_TIME_STR = "00:00"
     var curMusicInfo by mutableStateOf<Pair<String, NeteaseCloudMusic>?>(null)
@@ -67,18 +70,29 @@ object GuGuMediaPlayerController : GuGuMediaPlayerListener {
         playNext()
     }
 
-    fun playNext() {
+    fun skipNext() {
+        runCatching {
+            mediaPlayer.stop()
+            autoPlayNext()
+        }.getOrElse {
+            log.warn { it }
+        }
+    }
+
+    private fun playNext() {
         if (GlobalBean.musicList.isNotEmpty()) {
             if (LockUtils.tryLock(LockConsts.PLAYING_LOCK)) {
                 GlobalBean.IO_SCOPE.launch {
                     curMusicInfo = GlobalBean.musicList.removeFirst()
                     runCatching {
                         val music = NeteaseCloudMusicServiceImpl.getMusicById(curMusicInfo!!.second)
+                        log.debug { "getMusic: $music" }
                         mediaPlayer.setMusic(music)
                         mediaPlayer.play()
                     }.getOrElse {
-                        println("${curMusicInfo?.second?.name}: ${it.message}")
+                        log.warn { "${curMusicInfo?.second?.name}: ${it.message}" }
                         LockUtils.releaseLock(LockConsts.PLAYING_LOCK)
+                        log.debug { "${curMusicInfo?.second?.name} getMusicFailed, releaseLock" }
                         autoPlayNext()
                     }
                 }
