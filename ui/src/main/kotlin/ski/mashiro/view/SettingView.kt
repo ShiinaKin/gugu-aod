@@ -435,6 +435,195 @@ fun SettingView() {
                 }
             }
         }
+        // neteaseCloudMusicConfig
+        Column {
+            var tempPhoneNumber by remember {
+                mutableStateOf(
+                    GlobalBean.neteaseCloudMusicConfig.phoneNumber?.toString() ?: ""
+                )
+            }
+            var tempPassword by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.password ?: "") }
+            var tempPasswordMD5 by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.passwordMD5 ?: "") }
+            var tempCookie by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.cookie) }
+            var tempApiUrl by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.cloudMusicApiUrl) }
+            Row(
+                modifier = titleRowModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = titleBoxModifier,
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = "网易云设置",
+                        fontSize = 16.sp
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        if (
+                            StringUtils.isNotBlank(tempPhoneNumber)
+                            && (!StringUtils.isNumeric(tempPhoneNumber)
+                                    || !tempPhoneNumber.matches(Regex("\\^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}\\$")))
+                            || StringUtils.isBlank(tempApiUrl)
+                        ) {
+                            showFailedDialog = true
+                        } else {
+                            GlobalBean.neteaseCloudMusicConfig.cookie = tempCookie
+                            GlobalBean.neteaseCloudMusicConfig.cloudMusicApiUrl = tempApiUrl
+                            if (StringUtils.isNumeric(tempPhoneNumber)) {
+                                GlobalBean.neteaseCloudMusicConfig.phoneNumber = tempPhoneNumber.toInt()
+                                if (StringUtils.isNotBlank(tempPasswordMD5)) {
+                                    GlobalBean.neteaseCloudMusicConfig.passwordMD5 = tempPasswordMD5
+                                } else {
+                                    GlobalBean.neteaseCloudMusicConfig.password
+                                }
+                            }
+                            if (ConfigFileOperation.saveNeteaseCloudMusicConfig()) {
+                                showSucceedDialog = true
+                            } else {
+                                showUnknownErrDialog = true
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.LightGray
+                    ),
+                    modifier = btnModifier,
+                    contentPadding = PaddingValues(4.dp)
+                ) {
+                    Text(
+                        text = "保存",
+                        textAlign = TextAlign.Center,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "手机号：",
+                        )
+                    }
+                    TextField(
+                        value = tempPhoneNumber,
+                        onValueChange = {
+                            tempPhoneNumber = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "密码：",
+                        )
+                    }
+                    TextField(
+                        value = tempPassword,
+                        onValueChange = {
+                            tempPassword = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default,
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "密码MD5：",
+                        )
+                    }
+                    TextField(
+                        value = tempPasswordMD5,
+                        onValueChange = {
+                            tempPasswordMD5 = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default,
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Cookie：",
+                        )
+                    }
+                    TextField(
+                        value = tempCookie,
+                        onValueChange = {
+                            tempCookie = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "ApiUrl：",
+                        )
+                    }
+                    TextField(
+                        value = tempApiUrl,
+                        onValueChange = {
+                            tempApiUrl = it.trim()
                         },
                         modifier = textFieldModifier,
                         singleLine = true,
