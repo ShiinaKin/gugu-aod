@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import ski.mashiro.BackendMain
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.router.Router
+import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
 
 /**
  * @author mashirot
@@ -113,52 +114,54 @@ fun MenuComponent() {
             }
         }
 
-        Column(
-            modifier = Modifier.fillMaxWidth().height(80.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-            var connectStatus by remember { mutableStateOf(false to "未连接") }
-            LaunchedEffect(GlobalBean.webSocket) {
-                connectStatus = if (GlobalBean.webSocket == null) false to "未连接" else true to "已连接"
-            }
-            Button(
-                onClick = {
-                    if (connectStatus.first) {
-                        BackendMain.disconnect2Room()
-                    } else {
-                        BackendMain.connect2Room()
-                    }
-                },
-                modifier = Modifier.width(50.dp).height(25.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.LightGray
-                ),
-                contentPadding = PaddingValues(4.dp, 2.dp)
+        if (NativeDiscovery().discover()) {
+            Column(
+                modifier = Modifier.fillMaxWidth().height(80.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(
-                    text = if (connectStatus.first) "断开" else "连接",
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth().height(20.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource("icon/status.svg"),
-                    contentDescription = "connectStatusIcon",
-                    tint = Color.LightGray,
-                    modifier = Modifier.size(18.dp).align(Alignment.CenterVertically)
-                )
-                Box(Modifier.height(16.dp).align(Alignment.CenterVertically)) {
+                var connectStatus by remember { mutableStateOf(false to "未连接") }
+                LaunchedEffect(GlobalBean.webSocket) {
+                    connectStatus = if (GlobalBean.webSocket == null) false to "未连接" else true to "已连接"
+                }
+                Button(
+                    onClick = {
+                        if (connectStatus.first) {
+                            BackendMain.disconnect2Room()
+                        } else {
+                            BackendMain.connect2Room()
+                        }
+                    },
+                    modifier = Modifier.width(50.dp).height(25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.LightGray
+                    ),
+                    contentPadding = PaddingValues(4.dp, 2.dp)
+                ) {
                     Text(
-                        text = " ${connectStatus.second}",
+                        text = if (connectStatus.first) "断开" else "连接",
                         textAlign = TextAlign.Center,
-                        fontSize = 12.sp
+                        fontSize = 14.sp
                     )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource("icon/status.svg"),
+                        contentDescription = "connectStatusIcon",
+                        tint = Color.LightGray,
+                        modifier = Modifier.size(18.dp).align(Alignment.CenterVertically)
+                    )
+                    Box(Modifier.height(16.dp).align(Alignment.CenterVertically)) {
+                        Text(
+                            text = " ${connectStatus.second}",
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             }
         }
