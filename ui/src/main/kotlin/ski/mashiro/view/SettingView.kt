@@ -1,6 +1,8 @@
 package ski.mashiro.view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -11,12 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apache.commons.lang3.StringUtils
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.file.ConfigFileOperation
+import java.util.*
+import kotlin.time.Duration
 
 /**
  * @author mashirot
@@ -25,7 +30,7 @@ import ski.mashiro.file.ConfigFileOperation
 @Composable
 fun SettingView() {
     Column(
-        modifier = Modifier.fillMaxSize().padding(5.dp)
+        modifier = Modifier.fillMaxSize().padding(5.dp).verticalScroll(rememberScrollState())
     ) {
         var showSucceedDialog by remember { mutableStateOf(false) }
         var showFailedDialog by remember { mutableStateOf(false) }
@@ -112,7 +117,7 @@ fun SettingView() {
         val titleBoxModifier = Modifier.height(44.dp)
         val btnModifier = Modifier.width(44.dp).height(28.dp).align(Alignment.CenterHorizontally)
         val colModifier = Modifier.fillMaxWidth().height(60.dp).padding(0.dp, 5.dp)
-        val textModifier = Modifier.width(58.dp).fillMaxHeight()
+        val textModifier = Modifier.width(72.dp).fillMaxHeight()
         val textFieldModifier = Modifier.height(60.dp).weight(1F)
         val rowItemModifier = Modifier.weight(0.5F).fillMaxHeight().padding(5.dp, 0.dp)
         // roomConfig
@@ -181,7 +186,7 @@ fun SettingView() {
                     TextField(
                         value = tempRoomId,
                         onValueChange = {
-                            tempRoomId = it
+                            tempRoomId = it.trim()
                         },
                         modifier = textFieldModifier,
                         singleLine = true,
@@ -202,7 +207,7 @@ fun SettingView() {
                     TextField(
                         value = tempUID,
                         onValueChange = {
-                            tempUID = it
+                            tempUID = it.trim()
                         },
                         modifier = textFieldModifier,
                         singleLine = true,
@@ -229,7 +234,15 @@ fun SettingView() {
                     TextField(
                         value = tempCookie,
                         onValueChange = {
-                            tempCookie = it
+                            tempCookie = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+            }
+        }
         // songRequestConfig
         Column {
             var tempPrefix by remember { mutableStateOf(GlobalBean.songRequestConfig.prefix) }
