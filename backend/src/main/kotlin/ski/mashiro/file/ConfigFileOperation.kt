@@ -36,19 +36,48 @@ object ConfigFileOperation {
             YAML_MAPPER.readValue(neteaseCloudMusicConfigYaml, NeteaseCloudMusicConfig::class.java)
     }
 
-    fun saveConfig() {
-        val roomConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.roomConfig)
-        val songRequestConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.songRequestConfig)
-        val neteaseCloudMusicConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.neteaseCloudMusicConfig)
-        runCatching {
-            FileUtils.writeStringToFile(roomConfigFile, roomConfigYaml, UTF_8)
-            FileUtils.writeStringToFile(songRequestConfigFile, songRequestConfigYaml, UTF_8)
-            FileUtils.writeStringToFile(neteaseCloudMusicConfigFile, neteaseCloudMusicConfigYaml, UTF_8)
+    fun saveConfig(): Boolean =
+        if (saveRoomConfig() && saveSongRequestConfig() && saveNeteaseCloudMusicConfig()) {
             log.debug { "保存配置成功" }
-        }.getOrElse {
-            log.warn { "保存配置失败, $it" }
+            true
+        } else {
+            log.warn { "保存配置失败" }
+            false
         }
-    }
+
+    fun saveRoomConfig(): Boolean =
+        runCatching {
+            val roomConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.roomConfig)
+            FileUtils.writeStringToFile(roomConfigFile, roomConfigYaml, UTF_8)
+            log.debug { "保存roomConfig成功" }
+            true
+        }.getOrElse {
+            log.warn { "保存roomConfig失败, $it" }
+            false
+        }
+
+
+    fun saveSongRequestConfig(): Boolean =
+        runCatching {
+            val songRequestConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.songRequestConfig)
+            FileUtils.writeStringToFile(songRequestConfigFile, songRequestConfigYaml, UTF_8)
+            log.debug { "保存songRequestConfig成功" }
+            true
+        }.getOrElse {
+            log.warn { "保存songRequestConfig失败, $it" }
+            false
+        }
+
+    fun saveNeteaseCloudMusicConfig(): Boolean =
+        runCatching {
+            val neteaseCloudMusicConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.neteaseCloudMusicConfig)
+            FileUtils.writeStringToFile(neteaseCloudMusicConfigFile, neteaseCloudMusicConfigYaml, UTF_8)
+            log.debug { "保存neteaseCloudMusicConfig成功" }
+            true
+        }.getOrElse {
+            log.warn { "保存neteaseCloudMusicConfig失败, $it" }
+            false
+        }
 
     private fun initConfig() {
         if (!CONFIG_FOLDER.exists()) {
