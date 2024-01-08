@@ -1,7 +1,22 @@
 package ski.mashiro.view
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.apache.commons.lang3.StringUtils
+import ski.mashiro.common.GlobalBean
+import ski.mashiro.file.ConfigFileOperation
 
 /**
  * @author mashirot
@@ -9,5 +24,219 @@ import androidx.compose.runtime.Composable
  */
 @Composable
 fun SettingView() {
-    Text("SettingView")
+    Column(
+        modifier = Modifier.fillMaxSize().padding(5.dp)
+    ) {
+        var showSucceedDialog by remember { mutableStateOf(false) }
+        var showFailedDialog by remember { mutableStateOf(false) }
+        var showUnknownErrDialog by remember { mutableStateOf(false) }
+        if (showSucceedDialog) {
+            AlertDialog(
+                modifier = Modifier.width(200.dp).height(120.dp),
+                text = {
+                    Text(
+                        text = "成功",
+                        textAlign = TextAlign.Center
+                    )
+                },
+                onDismissRequest = {
+                    showSucceedDialog = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showSucceedDialog = false
+                        },
+                        modifier = Modifier.height(40.dp)
+                    ) {
+                        Text(
+                            text = "OK"
+                        )
+                    }
+                }
+            )
+        }
+        if (showFailedDialog) {
+            AlertDialog(
+                modifier = Modifier.width(200.dp).height(120.dp),
+                text = {
+                    Text(
+                        text = "内容不合法",
+                        textAlign = TextAlign.Center
+                    )
+                },
+                onDismissRequest = {
+                    showFailedDialog = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showFailedDialog = false
+                        },
+                        modifier = Modifier.height(40.dp)
+                    ) {
+                        Text(
+                            text = "OK"
+                        )
+                    }
+                }
+            )
+        }
+        if (showUnknownErrDialog) {
+            AlertDialog(
+                modifier = Modifier.width(200.dp).height(120.dp),
+                text = {
+                    Text(
+                        text = "未知错误，请查看日志",
+                        textAlign = TextAlign.Center
+                    )
+                },
+                onDismissRequest = {
+                    showUnknownErrDialog = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showUnknownErrDialog = false
+                        },
+                        modifier = Modifier.height(40.dp)
+                    ) {
+                        Text(
+                            text = "OK"
+                        )
+                    }
+                }
+            )
+        }
+        val titleRowModifier = Modifier.fillMaxWidth().height(44.dp)
+        val titleBoxModifier = Modifier.height(44.dp)
+        val btnModifier = Modifier.width(44.dp).height(28.dp).align(Alignment.CenterHorizontally)
+        val colModifier = Modifier.fillMaxWidth().height(60.dp).padding(0.dp, 5.dp)
+        val textModifier = Modifier.width(58.dp).fillMaxHeight()
+        val textFieldModifier = Modifier.height(60.dp).weight(1F)
+        val rowItemModifier = Modifier.weight(0.5F).fillMaxHeight().padding(5.dp, 0.dp)
+        // roomConfig
+        Column {
+            var tempRoomId by remember { mutableStateOf(GlobalBean.roomConfig.roomId.toString()) }
+            var tempUID by remember { mutableStateOf(GlobalBean.roomConfig.uid.toString()) }
+            var tempCookie by remember { mutableStateOf(GlobalBean.roomConfig.cookie) }
+            Row(
+                modifier = titleRowModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = titleBoxModifier,
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = "房间设置",
+                        fontSize = 16.sp
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        if (!StringUtils.isNumeric(tempRoomId) || !StringUtils.isNumeric(tempUID)) {
+                            showFailedDialog = true
+                        } else {
+                            GlobalBean.roomConfig.roomId = tempRoomId.toLong()
+                            GlobalBean.roomConfig.uid = tempUID.toLong()
+                            GlobalBean.roomConfig.cookie = tempCookie
+                            if (ConfigFileOperation.saveRoomConfig()) {
+                                showSucceedDialog = true
+                            } else {
+                                showUnknownErrDialog = true
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.LightGray
+                    ),
+                    modifier = btnModifier,
+                    contentPadding = PaddingValues(4.dp)
+                ) {
+                    Text(
+                        text = "保存",
+                        textAlign = TextAlign.Center,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "房间号：",
+                        )
+                    }
+                    TextField(
+                        value = tempRoomId,
+                        onValueChange = {
+                            tempRoomId = it
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "UID：",
+                        )
+                    }
+                    TextField(
+                        value = tempUID,
+                        onValueChange = {
+                            tempUID = it
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Cookie：",
+                        )
+                    }
+                    TextField(
+                        value = tempCookie,
+                        onValueChange = {
+                            tempCookie = it
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+            }
+        }
+    }
 }
