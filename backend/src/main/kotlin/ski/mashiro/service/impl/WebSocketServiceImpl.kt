@@ -1,10 +1,9 @@
 package ski.mashiro.service.impl
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
 import ski.mashiro.common.GlobalBean.roomConfig
 import ski.mashiro.common.GlobalBean.webSocket
@@ -19,8 +18,8 @@ import ski.mashiro.util.LockUtils
 /**
  * @author mashirot
  */
-@Logger
 object WebSocketServiceImpl : WebSocketService {
+    private val log = KotlinLogging.logger { this::class.java.name }
 
     private const val MAX_RECONNECT_NUM = 5
 

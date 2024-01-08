@@ -1,17 +1,16 @@
 package ski.mashiro.timer
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import okhttp3.WebSocket
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.util.HeartbeatUtils
 import kotlin.time.Duration
 
 /**
  * @author mashirot
  */
-@Logger
 object HeartbeatTimer {
+    private val log = KotlinLogging.logger { this::class.java.name }
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 

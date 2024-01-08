@@ -3,10 +3,9 @@ package ski.mashiro.component.player
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.time.DurationFormatUtils
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.const.LockConsts
 import ski.mashiro.entity.music.NeteaseCloudMusic
@@ -18,8 +17,9 @@ import ski.mashiro.util.LockUtils
  * @author mashirot
  * 2024/1/5 22:30
  */
-@Logger
 object GuGuMediaPlayerController : GuGuMediaPlayerListener {
+    private val log = KotlinLogging.logger { this::class.java.name }
+
     private const val INIT_TIME_STR = "00:00"
     var curMusicInfo by mutableStateOf<Pair<String, NeteaseCloudMusic>?>(null)
     var durationStr by mutableStateOf(INIT_TIME_STR)

@@ -1,12 +1,11 @@
 package ski.mashiro.listener
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.handler.MessageHandler
 import ski.mashiro.service.impl.WebSocketServiceImpl
@@ -16,8 +15,8 @@ import ski.mashiro.util.HeartbeatUtils
 /**
  * @author mashirot
  */
-@Logger
 class WebSocketListener : WebSocketListener() {
+    private val log = KotlinLogging.logger { this::class.java.name }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         log.debug { "ws closed" }

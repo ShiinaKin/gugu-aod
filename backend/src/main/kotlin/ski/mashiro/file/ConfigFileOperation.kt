@@ -1,8 +1,7 @@
 package ski.mashiro.file
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.commons.io.FileUtils
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.common.GlobalBean.CONFIG_FOLDER
 import ski.mashiro.common.GlobalBean.YAML_MAPPER
@@ -16,8 +15,9 @@ import kotlin.text.Charsets.UTF_8
  * @author mashirot
  * 2024/1/6 20:02
  */
-@Logger
 object ConfigFileOperation {
+    private val log = KotlinLogging.logger { this::class.java.name }
+
     private val roomConfigFile = File(CONFIG_FOLDER, "roomConfig.yml")
     private val songRequestConfigFile = File(CONFIG_FOLDER, "songRequestConfig.yml")
     private val neteaseCloudMusicConfigFile = File(CONFIG_FOLDER, "neteaseCloudMusicConfig.yml")
@@ -75,7 +75,7 @@ object ConfigFileOperation {
     }
 
     private fun initRoomConfig(): Boolean {
-        val defaultRoomConfig = RoomConfig(850221, 0)
+        val defaultRoomConfig = RoomConfig(850221, 0, "")
         GlobalBean.roomConfig = defaultRoomConfig
         if (!roomConfigFile.createNewFile()) {
             return false

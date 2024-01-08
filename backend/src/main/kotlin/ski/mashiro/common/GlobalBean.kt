@@ -24,7 +24,7 @@ object GlobalBean {
     val JSON_MAPPER = JsonMapper().registerKotlinModule()
     val YAML_MAPPER = YAMLMapper().registerKotlinModule()
     val IO_SCOPE = CoroutineScope(Dispatchers.IO)
-    private val RESOURCES_FOLDER = File(System.getProperty("compose.application.resources.dir"))
+    val RESOURCES_FOLDER = File(System.getProperty("compose.application.resources.dir"))
     val CONFIG_FOLDER = File(RESOURCES_FOLDER, "config")
     lateinit var roomConfig: RoomConfig
     lateinit var neteaseCloudMusicConfig: NeteaseCloudMusicConfig

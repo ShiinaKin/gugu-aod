@@ -21,6 +21,8 @@ dependencies {
     api("moe.tlaster:precompose:1.5.10")
     // https://mvnrepository.com/artifact/uk.co.caprica/vlcj
     implementation("uk.co.caprica:vlcj:4.8.2")
+    // https://mvnrepository.com/artifact/io.github.oshai/kotlin-logging-jvm
+    implementation("io.github.oshai:kotlin-logging-jvm:6.0.1")
 }
 
 compose.desktop {

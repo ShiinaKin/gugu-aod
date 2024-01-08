@@ -1,9 +1,8 @@
 package ski.mashiro.handler
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.common.GlobalBean.IO_SCOPE
 import ski.mashiro.common.GlobalBean.roomConfig
@@ -28,8 +27,8 @@ import java.util.*
 /**
  * @author mashirot
  */
-@Logger
 object CometHandler {
+    private val log = KotlinLogging.logger { this::class.java.name }
 
     fun handle(map: HashMap<*, *>) {
         val comet = trans2Comet(map["info"] as List<*>)

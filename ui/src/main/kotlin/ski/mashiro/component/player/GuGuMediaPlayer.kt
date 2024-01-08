@@ -1,9 +1,8 @@
 package ski.mashiro.component.player
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.const.LockConsts
 import ski.mashiro.entity.music.NeteaseCloudMusic
@@ -17,8 +16,9 @@ import uk.co.caprica.vlcj.player.component.AudioPlayerComponent
  * @author mashirot
  * 2024/1/5 21:33
  */
-@Logger
 class GuGuMediaPlayer {
+    private val log = KotlinLogging.logger { this::class.java.name }
+
     private var mediaPlayer: MediaPlayer? = null
     private var music: NeteaseCloudMusic? = null
     private var duration = 0L

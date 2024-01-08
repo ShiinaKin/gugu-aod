@@ -1,8 +1,7 @@
 package ski.mashiro.handler
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import okio.ByteString
-import ski.mashiro.annotation.Logger
-import ski.mashiro.annotation.Logger.Companion.log
 import ski.mashiro.common.GlobalBean.JSON_MAPPER
 import ski.mashiro.const.DataCmdConsts
 import ski.mashiro.const.DataHeaderConsts
@@ -14,8 +13,8 @@ import java.util.*
 /**
  * @author mashirot
  */
-@Logger
 object MessageHandler {
+    private val log = KotlinLogging.logger { this::class.java.name }
 
     fun handle(byteString: ByteString) {
         val jsonList = byteString2Json(byteString)
