@@ -22,7 +22,7 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
             return
         }
         if (Objects.isNull(neteaseCloudMusicConfig.phoneNumber) ||
-            (Objects.isNull(neteaseCloudMusicConfig.password) && Objects.isNull(neteaseCloudMusicConfig.passwordMd5))
+            (Objects.isNull(neteaseCloudMusicConfig.password) && Objects.isNull(neteaseCloudMusicConfig.passwordMD5))
         ) {
             return
         }
@@ -30,8 +30,8 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         val loginReq = RequestBuilderFactory.getReqBuilderWithUA()
             .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/cellphone?" +
                     "phone=${neteaseCloudMusicConfig.phoneNumber}&".also {
-                        if (Objects.nonNull(neteaseCloudMusicConfig.passwordMd5)) {
-                            it + "md5_password=${neteaseCloudMusicConfig.passwordMd5}"
+                        if (Objects.nonNull(neteaseCloudMusicConfig.passwordMD5)) {
+                            it + "md5_password=${neteaseCloudMusicConfig.passwordMD5}"
                             return@also
                         }
                         it + "password=${neteaseCloudMusicConfig.password}"
