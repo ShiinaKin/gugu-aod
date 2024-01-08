@@ -230,6 +230,211 @@ fun SettingView() {
                         value = tempCookie,
                         onValueChange = {
                             tempCookie = it
+        // songRequestConfig
+        Column {
+            var tempPrefix by remember { mutableStateOf(GlobalBean.songRequestConfig.prefix) }
+            var tempMedalName by remember { mutableStateOf(GlobalBean.songRequestConfig.medalName ?: "") }
+            var tempMedalLevel by remember { mutableStateOf(GlobalBean.songRequestConfig.medalLevel?.toString() ?: "") }
+            var tempEachUserCoolDown by remember { mutableStateOf(GlobalBean.songRequestConfig.eachUserCoolDown) }
+            var tempEachSongCoolDown by remember { mutableStateOf(GlobalBean.songRequestConfig.eachSongCoolDown) }
+            var tempWaitListMaxSize by remember { mutableStateOf(GlobalBean.songRequestConfig.waitListMaxSize.toString()) }
+            Row(
+                modifier = titleRowModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = titleBoxModifier,
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = "点歌设置",
+                        fontSize = 16.sp
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        if (StringUtils.isBlank(tempPrefix) || !StringUtils.isNumeric(tempWaitListMaxSize)
+                            || StringUtils.isNotBlank(tempMedalName) && !StringUtils.isNumeric(tempMedalLevel)
+                            || StringUtils.isBlank(tempEachUserCoolDown) || StringUtils.isBlank(tempEachSongCoolDown)
+                            || Objects.isNull(Duration.parseOrNull(tempEachUserCoolDown))
+                            || Objects.isNull(Duration.parseOrNull(tempEachSongCoolDown))
+                        ) {
+                            showFailedDialog = true
+                        } else {
+                            GlobalBean.songRequestConfig.prefix = tempPrefix
+                            GlobalBean.songRequestConfig.waitListMaxSize = tempWaitListMaxSize.toInt()
+                            GlobalBean.songRequestConfig.eachUserCoolDown = tempEachUserCoolDown
+                            GlobalBean.songRequestConfig.eachSongCoolDown = tempEachSongCoolDown
+                            if (StringUtils.isNotBlank(tempMedalName)) {
+                                GlobalBean.songRequestConfig.medalName
+                                GlobalBean.songRequestConfig.medalLevel
+                            }
+                            if (ConfigFileOperation.saveSongRequestConfig()) {
+                                showSucceedDialog = true
+                            } else {
+                                showUnknownErrDialog = true
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.LightGray
+                    ),
+                    modifier = btnModifier,
+                    contentPadding = PaddingValues(4.dp)
+                ) {
+                    Text(
+                        text = "保存",
+                        textAlign = TextAlign.Center,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "弹幕前缀：",
+                        )
+                    }
+                    TextField(
+                        value = tempPrefix,
+                        onValueChange = {
+                            tempPrefix = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "歌单大小：",
+                        )
+                    }
+                    TextField(
+                        value = tempWaitListMaxSize,
+                        onValueChange = {
+                            tempWaitListMaxSize = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "勋章名称：",
+                        )
+                    }
+                    TextField(
+                        value = tempMedalName,
+                        onValueChange = {
+                            tempMedalName = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "勋章等级：",
+                        )
+                    }
+                    TextField(
+                        value = tempMedalLevel,
+                        onValueChange = {
+                            tempMedalLevel = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+            }
+            Row(
+                modifier = colModifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "用户冷却：",
+                        )
+                    }
+                    TextField(
+                        value = tempEachUserCoolDown,
+                        onValueChange = {
+                            tempEachUserCoolDown = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+                Row(
+                    modifier = rowItemModifier,
+                ) {
+                    Box(
+                        modifier = textModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "歌曲冷却：",
+                        )
+                    }
+                    TextField(
+                        value = tempEachSongCoolDown,
+                        onValueChange = {
+                            tempEachSongCoolDown = it.trim()
+                        },
+                        modifier = textFieldModifier,
+                        singleLine = true,
+                        textStyle = TextStyle.Default
+                    )
+                }
+            }
+        }
                         },
                         modifier = textFieldModifier,
                         singleLine = true,
