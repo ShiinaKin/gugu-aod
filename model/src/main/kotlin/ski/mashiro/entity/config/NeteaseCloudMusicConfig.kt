@@ -4,7 +4,7 @@ package ski.mashiro.entity.config
  * @author mashirot
  */
 data class NeteaseCloudMusicConfig(
-    var phoneNumber: Int?,
+    var phoneNumber: Long?,
     val password: String?,
     var passwordMD5: String?,
     var cookie: String,
