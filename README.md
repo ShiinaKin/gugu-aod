@@ -12,6 +12,10 @@
 
 项目采用GPLv3协议开源，文字部分采用CC BY-SA 4.0协议许可使用，icon版权归属：[露蒂丝](https://space.bilibili.com/52522)
 
+![Home](readmeImg/Home.png)
+![ManualReq](readmeImg/ManualSongReq.png)
+![Setting](readmeImg/Setting.png)
+
 ## 使用
 
 1. 本程序依赖于VLC播放音频，VLC 是一款免费的开源跨平台多媒体播放器，请到[官网](https://www.videolan.org/vlc/)下载安装
