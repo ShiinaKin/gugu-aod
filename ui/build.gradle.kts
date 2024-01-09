@@ -27,12 +27,13 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "ski/mashiro/MainKt"
+        mainClass = "ski.mashiro.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Exe)
             packageName = "gugu-aod"
             packageVersion = "1.0.0"
+            licenseFile.set(project.file("../LICENSE"))
 
             windows {
                 iconFile.set(project.file("src/main/resources/icon.ico"))

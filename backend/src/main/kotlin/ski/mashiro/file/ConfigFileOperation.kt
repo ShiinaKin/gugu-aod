@@ -104,7 +104,7 @@ object ConfigFileOperation {
     }
 
     private fun initRoomConfig(): Boolean {
-        val defaultRoomConfig = RoomConfig(850221, 0, "")
+        val defaultRoomConfig = RoomConfig(0, 0, "")
         GlobalBean.roomConfig = defaultRoomConfig
         if (!roomConfigFile.createNewFile()) {
             return false
@@ -137,7 +137,7 @@ object ConfigFileOperation {
             null,
             null,
             "",
-            "https://cloudmusic.sakurasou.io"
+            "https://请.自行搭建.Ovo"
         )
         GlobalBean.neteaseCloudMusicConfig = defaultNeteaseCloudMusicConfig
         if (!neteaseCloudMusicConfigFile.createNewFile()) {
