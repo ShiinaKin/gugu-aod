@@ -8,8 +8,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,7 +29,7 @@ import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
  * @author mashirot
  * 2024/1/3 22:24
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun ManualSongRequestView() {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -60,7 +63,7 @@ fun ManualSongRequestView() {
                         searchContent = it
                     },
                     modifier = Modifier.weight(1F, true),
-                    maxLines = 1
+                    singleLine = true
                 )
                 IconButton(
                     onClick = {
@@ -84,10 +87,10 @@ fun ManualSongRequestView() {
             modifier = Modifier.fillMaxWidth()
                 .weight(1f, true)
         ) {
-            val musicNameWeight = 0.35F
+            val musicNameWeight = 0.4F
             val singerWeight = 0.25F
             val durationWeight = 0.1F
-            val operationWeight = 0.25F
+            val operationWeight = 0.2F
             val colFontSize = 14.sp
             val colHorizontalPadding = 2.dp
             val colVerticalPadding = 4.dp
@@ -106,8 +109,18 @@ fun ManualSongRequestView() {
                     Divider(Modifier.padding(2.dp, 1.dp))
                 }
                 items(searchResult) { music ->
+                    var isHover by remember { mutableStateOf(false) }
+                    var isAdded by remember { mutableStateOf(false) }
                     Row(
-                        Modifier.fillMaxWidth(),
+                        Modifier.fillMaxWidth()
+                            .height(36.dp)
+                            .background(color = if (isHover) Color.LightGray else Color.White)
+                            .onPointerEvent(PointerEventType.Enter) {
+                                isHover = true
+                            }
+                            .onPointerEvent(PointerEventType.Exit) {
+                                isHover = false
+                            },
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -135,20 +148,38 @@ fun ManualSongRequestView() {
                         TextButton(
                             onClick = {
                                 GlobalBean.musicList.add("Admin" to music)
+                                isAdded = true
                             },
-                            modifier = Modifier.weight(operationWeight)
+                            modifier = Modifier.weight(operationWeight).padding(10.dp, 0.dp),
+                            contentPadding = (PaddingValues(2.dp)),
+                            enabled = !isAdded
                         ) {
-                            Text(
-                                text = "添加",
-                                Modifier
-                                    .padding(colHorizontalPadding, colVerticalPadding)
-                                    .align(Alignment.CenterVertically),
-                                textAlign = TextAlign.Center,
-                                fontSize = colFontSize,
-                                maxLines = 1,
-                                softWrap = false,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            val btnFontSize = 12.sp
+                            if (!isAdded) {
+                                Text(
+                                    text = "添加",
+                                    Modifier
+                                        .padding(colHorizontalPadding, colVerticalPadding)
+                                        .align(Alignment.CenterVertically),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = btnFontSize,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            } else {
+                                Text(
+                                    text = "已添加",
+                                    Modifier
+                                        .padding(colHorizontalPadding, colVerticalPadding)
+                                        .align(Alignment.CenterVertically),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = btnFontSize,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                     }
                 }
