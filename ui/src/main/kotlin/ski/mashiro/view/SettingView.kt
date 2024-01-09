@@ -17,9 +17,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import org.apache.commons.lang3.StringUtils
 import ski.mashiro.common.GlobalBean
+import ski.mashiro.exception.NeteaseCouldMusicException
 import ski.mashiro.file.ConfigFileOperation
+import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
 import java.util.*
 import kotlin.time.Duration
 
@@ -450,15 +454,43 @@ fun SettingView() {
         }
         // neteaseCloudMusicConfig
         Column {
-            var tempPhoneNumber by remember {
-                mutableStateOf(
-                    GlobalBean.neteaseCloudMusicConfig.phoneNumber?.toString() ?: ""
+            var tempErrMsg by remember { mutableStateOf("") }
+            var showNeteaseErrDialog by remember { mutableStateOf(false) }
+            if (showNeteaseErrDialog) {
+                AlertDialog(
+                    modifier = Modifier.width(200.dp).height(120.dp),
+                    text = {
+                        Text(
+                            text = "错误: $tempErrMsg",
+                            textAlign = TextAlign.Start
+                        )
+                    },
+                    onDismissRequest = {
+                        showNeteaseErrDialog = false
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showNeteaseErrDialog = false
+                            },
+                            modifier = Modifier.height(40.dp)
+                        ) {
+                            Text(
+                                text = "OK"
+                            )
+                        }
+                    }
                 )
             }
+            var tempPhoneNumber
+                    by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.phoneNumber?.toString() ?: "") }
             var tempPassword by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.password ?: "") }
             var tempPasswordMD5 by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.passwordMD5 ?: "") }
             var tempCookie by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.cookie) }
             var tempApiUrl by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.cloudMusicApiUrl) }
+            LaunchedEffect(GlobalBean.neteaseCloudMusicConfig.cookie) {
+                tempCookie = GlobalBean.neteaseCloudMusicConfig.cookie
+            }
             Row(
                 modifier = titleRowModifier,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -473,12 +505,48 @@ fun SettingView() {
                         fontSize = 16.sp
                     )
                 }
+                Box {
+                    Text(
+                        text = "登录状态: " + if (GlobalBean.neteaseCloudMusicLoginStatus) "已登录" else "未登录",
+                        textAlign = TextAlign.Start
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        GlobalBean.IO_SCOPE.launch {
+                            runCatching {
+                                NeteaseCloudMusicServiceImpl.login()
+                                GlobalBean.neteaseCloudMusicLoginStatus = NeteaseCloudMusicServiceImpl.getLoginStatus()
+                                if (ConfigFileOperation.saveNeteaseCloudMusicConfig()) {
+                                    showSucceedDialog = true
+                                } else {
+                                    showUnknownErrDialog = true
+                                }
+                            }.getOrElse {
+                                tempErrMsg =
+                                    if (it is NeteaseCouldMusicException) it.message else "未知错误，可能是api配置不正确或网络问题"
+                                showNeteaseErrDialog = true
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.LightGray
+                    ),
+                    modifier = btnModifier,
+                    contentPadding = PaddingValues(4.dp)
+                ) {
+                    Text(
+                        text = "登录",
+                        textAlign = TextAlign.Center,
+                        fontSize = 12.sp
+                    )
+                }
                 TextButton(
                     onClick = {
                         if (
                             StringUtils.isNotBlank(tempPhoneNumber)
                             && (!StringUtils.isNumeric(tempPhoneNumber)
-                                    || !tempPhoneNumber.matches(Regex("\\^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}\\$")))
+                                    || !tempPhoneNumber.matches(Regex("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}\$")))
                             || StringUtils.isBlank(tempApiUrl)
                         ) {
                             showFailedDialog = true
@@ -486,11 +554,16 @@ fun SettingView() {
                             GlobalBean.neteaseCloudMusicConfig.cookie = tempCookie
                             GlobalBean.neteaseCloudMusicConfig.cloudMusicApiUrl = tempApiUrl
                             if (StringUtils.isNumeric(tempPhoneNumber)) {
-                                GlobalBean.neteaseCloudMusicConfig.phoneNumber = tempPhoneNumber.toInt()
+                                GlobalBean.neteaseCloudMusicConfig.phoneNumber = tempPhoneNumber.toLong()
                                 if (StringUtils.isNotBlank(tempPasswordMD5)) {
                                     GlobalBean.neteaseCloudMusicConfig.passwordMD5 = tempPasswordMD5
                                 } else {
                                     GlobalBean.neteaseCloudMusicConfig.password
+                                }
+                            }
+                            if (StringUtils.isNotBlank(GlobalBean.neteaseCloudMusicConfig.cookie)) {
+                                GlobalBean.IO_SCOPE.launch {
+                                    GlobalBean.neteaseCloudMusicLoginStatus = NeteaseCloudMusicServiceImpl.getLoginStatus()
                                 }
                             }
                             if (ConfigFileOperation.saveNeteaseCloudMusicConfig()) {
