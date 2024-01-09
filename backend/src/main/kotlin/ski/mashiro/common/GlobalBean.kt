@@ -33,4 +33,5 @@ object GlobalBean {
     lateinit var musicCache: Cache<Long, NeteaseCloudMusic>
     val musicList = mutableStateListOf<Pair<String, NeteaseCloudMusic>>()
     var webSocket by mutableStateOf<WebSocket?>(null)
+    var neteaseCloudMusicLoginStatus by mutableStateOf(false)
 }

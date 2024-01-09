@@ -9,10 +9,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.component.MediaPlayerComponent
 import ski.mashiro.component.PlayListComponent
 import ski.mashiro.component.player.GuGuMediaPlayerController
+import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
 
 /**
@@ -40,6 +42,9 @@ fun HomeView() {
                     textAlign = TextAlign.Center
                 )
             }
+        }
+        GlobalBean.IO_SCOPE.launch {
+            GlobalBean.neteaseCloudMusicLoginStatus = NeteaseCloudMusicServiceImpl.getLoginStatus()
         }
         LaunchedEffect(GlobalBean.musicList.size) {
             if (GlobalBean.musicList.isNotEmpty() && !GuGuMediaPlayerController.hasMusic()) {
