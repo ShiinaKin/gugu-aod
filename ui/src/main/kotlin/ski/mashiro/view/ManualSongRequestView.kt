@@ -34,6 +34,34 @@ import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
 fun ManualSongRequestView() {
     Column(modifier = Modifier.fillMaxSize()) {
 
+        var showFailedDialog by remember { mutableStateOf(false) }
+        if (showFailedDialog) {
+            AlertDialog(
+                modifier = Modifier.width(250.dp).height(120.dp),
+                text = {
+                    Text(
+                        text = "请求失败，可能是apiUrl不正确或网络问题",
+                        textAlign = TextAlign.Start
+                    )
+                },
+                onDismissRequest = {
+                    showFailedDialog = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showFailedDialog = false
+                        },
+                        modifier = Modifier.height(40.dp)
+                    ) {
+                        Text(
+                            text = "OK"
+                        )
+                    }
+                }
+            )
+        }
+
         var searchResult by remember { mutableStateOf<List<NeteaseCloudMusic>>(emptyList()) }
 
         Row(
@@ -69,7 +97,12 @@ fun ManualSongRequestView() {
                     onClick = {
                         if (StringUtils.isNotBlank(searchContent)) {
                             GlobalBean.IO_SCOPE.launch {
-                                searchResult = NeteaseCloudMusicServiceImpl.listMusicByKeyword(searchContent)
+                                runCatching {
+                                    searchResult = emptyList()
+                                    searchResult = NeteaseCloudMusicServiceImpl.listMusicByKeyword(searchContent)
+                                }.getOrElse {
+                                    showFailedDialog = true
+                                }
                             }
                         }
                     },
