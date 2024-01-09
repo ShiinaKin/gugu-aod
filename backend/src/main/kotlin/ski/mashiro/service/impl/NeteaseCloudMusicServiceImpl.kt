@@ -1,5 +1,6 @@
 package ski.mashiro.service.impl
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.StringUtils
@@ -16,6 +17,7 @@ import java.util.*
  * @author mashirot
  */
 object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
+    private val log = KotlinLogging.logger { this::class.java.name }
 
     override suspend fun login() {
         if (Objects.isNull(neteaseCloudMusicConfig.phoneNumber) ||
@@ -24,21 +26,22 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
             throw NeteaseCouldMusicException("手机号为空或密码/密码MD5为空")
         }
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val url = "${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/cellphone?" +
+                "phone=${neteaseCloudMusicConfig.phoneNumber}&" +
+                "" + if (Objects.nonNull(neteaseCloudMusicConfig.passwordMD5))
+                        "md5_password=${neteaseCloudMusicConfig.passwordMD5}"
+                    else
+                        "password=${neteaseCloudMusicConfig.password}"
         val loginReq = RequestBuilderFactory.getReqBuilderWithUA()
-            .url(
-                "${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/cellphone?" +
-                        "phone=${neteaseCloudMusicConfig.phoneNumber}&" +
-                        "" + if (Objects.nonNull(neteaseCloudMusicConfig.passwordMD5))
-                                "md5_password=${neteaseCloudMusicConfig.passwordMD5}"
-                            else
-                                "password=${neteaseCloudMusicConfig.password}"
-            )
+            .url(url)
             .build()
+        log.debug { "reqUrl: $url" }
         val json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(loginReq).execute().run {
                 body!!.string()
             }
         }
+        log.debug { "respJson: $json" }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         if ((respResult["code"] as Int) != 200) {
             val msg = respResult["msg"] as String
@@ -51,14 +54,17 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
 
     override suspend fun getMusicByKeyword(keyword: String): NeteaseCloudMusic {
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val url = "${neteaseCloudMusicConfig.cloudMusicApiUrl}/search?keywords=$keyword&limit=2"
         val searchReq = RequestBuilderFactory.getReqBuilderWithUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/search?keywords=$keyword&limit=2")
+            .url(url)
             .build()
+        log.debug { "reqUrl: $url" }
         val json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(searchReq).execute().run {
                 body!!.string()
             }
         }
+        log.debug { "respJson: $json" }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         val result = respResult["result"] as HashMap<*, *>
         val musics = result["songs"] as List<*>
@@ -71,14 +77,17 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
 
     override suspend fun listMusicByKeyword(keyword: String): List<NeteaseCloudMusic> {
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val url = "${neteaseCloudMusicConfig.cloudMusicApiUrl}/search?keywords=$keyword"
         val searchReq = RequestBuilderFactory.getReqBuilderWithUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/search?keywords=$keyword")
+            .url(url)
             .build()
+        log.debug { "reqUrl: $url" }
         val json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(searchReq).execute().run {
                 body!!.string()
             }
         }
+        log.debug { "respJson: $json" }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         val result = respResult["result"] as HashMap<*, *>
         val musics = result["songs"] as List<*>
@@ -97,26 +106,31 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         }
         val level = "exhigh"
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val url = "${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/url/v1?id=${music.id}&level=$level"
         val urlReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/url/v1?id=${music.id}&level=$level")
+            .url(url)
             .build()
+        log.debug { "reqUrl: $url" }
         var json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(urlReq).execute().run {
                 body!!.string()
             }
         }
+        log.debug { "respJson: $json" }
         var respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         var data = (respResult["data"] as List<*>)[0] as HashMap<*, *>
         music.url = data["url"] as String
-
+        val albumUrl = "${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/detail?ids=${music.id}"
         val detailReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/song/detail?ids=${music.id}")
+            .url(albumUrl)
             .build()
+        log.debug { "reqUrl: $albumUrl" }
         json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(detailReq).execute().run {
                 body!!.string()
             }
         }
+        log.debug { "respJson: $json" }
         respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         data = (respResult["songs"] as List<*>)[0] as HashMap<*, *>
         val album = data["al"] as HashMap<*, *>
@@ -126,12 +140,15 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
 
     override suspend fun getSongStatusById(songId: Long): Boolean {
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val url = "${neteaseCloudMusicConfig.cloudMusicApiUrl}/check/music?id=$songId"
         val checkReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/check/music?id=$songId")
+            .url(url)
             .build()
+        log.debug { "reqUrl: $url" }
         val json = okHttpClient.newCall(checkReq).execute().run {
             body!!.string()
         }
+        log.debug { "respJson: $json" }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         return respResult["success"] as Boolean
     }
@@ -141,14 +158,17 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
             return false
         }
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val url = "${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/status"
         val urlReq = RequestBuilderFactory.getReqBuilderWithNeteaseCloudMusicCookieAndUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/status")
+            .url(url)
             .build()
+        log.debug { "reqUrl: $url" }
         val json = withContext(Dispatchers.IO) {
             okHttpClient.newCall(urlReq).execute().run {
                 body!!.string()
             }
         }
+        log.debug { "respJson: $json" }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         val data = respResult["data"] as Map<*, *>
         return data["account"] != null
