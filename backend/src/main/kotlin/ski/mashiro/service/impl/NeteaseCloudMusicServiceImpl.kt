@@ -150,7 +150,8 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
             }
         }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
-        return respResult["account"] != null
+        val data = respResult["data"] as Map<*, *>
+        return data["account"] != null
     }
 
     private fun trans2MusicEntity(music: Map<*, *>): NeteaseCloudMusic {
@@ -158,7 +159,7 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         var singer = ""
         val iter = artists.iterator()
         while (iter.hasNext()) {
-            val artist = iter.next() as HashMap<*, *>
+            val artist = iter.next() as Map<*, *>
             singer += artist["name"].toString()
             if (iter.hasNext()) {
                 singer += ", "
