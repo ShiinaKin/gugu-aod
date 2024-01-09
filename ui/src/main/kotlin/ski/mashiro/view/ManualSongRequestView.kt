@@ -76,7 +76,7 @@ fun ManualSongRequestView() {
                     modifier = Modifier.width(54.dp)
                 ) {
                     Icon(
-                        painter = painterResource("icon/search.svg"),
+                        painter = painterResource("icons/search.svg"),
                         contentDescription = "searchIcon"
                     )
                 }

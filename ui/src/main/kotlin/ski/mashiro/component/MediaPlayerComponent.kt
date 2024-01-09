@@ -62,7 +62,7 @@ fun MediaPlayerComponent() {
                 )
             } else {
                 Icon(
-                    painter = painterResource("icon/album.svg"),
+                    painter = painterResource("icons/album.svg"),
                     contentDescription = "defaultMusicCoverImg",
                     modifier = Modifier.fillMaxSize(),
                     tint = Color.DarkGray
@@ -245,9 +245,9 @@ fun MediaPlayerComponent() {
                     ) {
                         Icon(
                             painter = if (GuGuMediaPlayerController.isPaused())
-                                painterResource("icon/play_arrow.svg")
+                                painterResource("icons/play_arrow.svg")
                             else
-                                painterResource("icon/pause.svg"),
+                                painterResource("icons/pause.svg"),
                             contentDescription = "play/pause btn",
                             modifier = Modifier.size(iconSize)
                         )
@@ -264,7 +264,7 @@ fun MediaPlayerComponent() {
                         )
                     ) {
                         Icon(
-                            painter = painterResource("icon/skip_next.svg"),
+                            painter = painterResource("icons/skip_next.svg"),
                             contentDescription = "skip next",
                             modifier = Modifier.size(iconSize)
                         )
@@ -288,7 +288,7 @@ fun MediaPlayerComponent() {
                         modifier = Modifier.size(16.dp)
                     ) {
                         Icon(
-                            painter = if (volumeStatus) painterResource("icon/volume_up.svg") else painterResource("icon/volume_off.svg"),
+                            painter = if (volumeStatus) painterResource("icons/volume_up.svg") else painterResource("icons/volume_off.svg"),
                             contentDescription = "volumeIcon"
                         )
                     }
