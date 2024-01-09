@@ -8,6 +8,7 @@ import ski.mashiro.common.GlobalBean.YAML_MAPPER
 import ski.mashiro.entity.config.NeteaseCloudMusicConfig
 import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
+import ski.mashiro.entity.config.SystemConfig
 import java.io.File
 import kotlin.text.Charsets.UTF_8
 
@@ -18,6 +19,7 @@ import kotlin.text.Charsets.UTF_8
 object ConfigFileOperation {
     private val log = KotlinLogging.logger { this::class.java.name }
 
+    val systemConfigFile = File(CONFIG_FOLDER, "systemConfig.yml")
     private val roomConfigFile = File(CONFIG_FOLDER, "roomConfig.yml")
     private val songRequestConfigFile = File(CONFIG_FOLDER, "songRequestConfig.yml")
     private val neteaseCloudMusicConfigFile = File(CONFIG_FOLDER, "neteaseCloudMusicConfig.yml")
@@ -37,8 +39,8 @@ object ConfigFileOperation {
     }
 
     fun saveConfig(): Boolean =
-        if (saveRoomConfig() && saveSongRequestConfig() && saveNeteaseCloudMusicConfig()) {
-            log.debug { "保存配置成功" }
+        if (saveRoomConfig() && saveSongRequestConfig() && saveNeteaseCloudMusicConfig() && saveSystemConfig()) {
+            log.info { "保存配置成功" }
             true
         } else {
             log.warn { "保存配置失败" }
@@ -49,7 +51,6 @@ object ConfigFileOperation {
         runCatching {
             val roomConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.roomConfig)
             FileUtils.writeStringToFile(roomConfigFile, roomConfigYaml, UTF_8)
-            log.debug { "保存roomConfig成功" }
             true
         }.getOrElse {
             log.warn { "保存roomConfig失败, $it" }
@@ -61,7 +62,6 @@ object ConfigFileOperation {
         runCatching {
             val songRequestConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.songRequestConfig)
             FileUtils.writeStringToFile(songRequestConfigFile, songRequestConfigYaml, UTF_8)
-            log.debug { "保存songRequestConfig成功" }
             true
         }.getOrElse {
             log.warn { "保存songRequestConfig失败, $it" }
@@ -72,10 +72,22 @@ object ConfigFileOperation {
         runCatching {
             val neteaseCloudMusicConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.neteaseCloudMusicConfig)
             FileUtils.writeStringToFile(neteaseCloudMusicConfigFile, neteaseCloudMusicConfigYaml, UTF_8)
-            log.debug { "保存neteaseCloudMusicConfig成功" }
             true
         }.getOrElse {
             log.warn { "保存neteaseCloudMusicConfig失败, $it" }
+            false
+        }
+
+    private fun saveSystemConfig(): Boolean =
+        runCatching {
+            if (!systemConfigFile.exists()) {
+                systemConfigFile.createNewFile()
+            }
+            val systemConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.systemConfig)
+            FileUtils.writeStringToFile(systemConfigFile, systemConfigYaml, UTF_8)
+            true
+        }.getOrElse {
+            log.warn { "保存systemConfig失败, $it" }
             false
         }
 

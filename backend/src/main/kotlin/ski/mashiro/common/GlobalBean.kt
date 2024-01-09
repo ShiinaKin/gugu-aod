@@ -14,6 +14,7 @@ import okhttp3.WebSocket
 import ski.mashiro.entity.config.NeteaseCloudMusicConfig
 import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
+import ski.mashiro.entity.config.SystemConfig
 import ski.mashiro.entity.music.NeteaseCloudMusic
 import java.io.File
 
@@ -29,6 +30,7 @@ object GlobalBean {
     lateinit var roomConfig: RoomConfig
     lateinit var neteaseCloudMusicConfig: NeteaseCloudMusicConfig
     lateinit var songRequestConfig: SongRequestConfig
+    lateinit var systemConfig: SystemConfig
     lateinit var uidCache: Cache<Long, Long>
     lateinit var musicCache: Cache<Long, NeteaseCloudMusic>
     val musicList = mutableStateListOf<Pair<String, NeteaseCloudMusic>>()

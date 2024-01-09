@@ -7,8 +7,11 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.FileAppender
+import org.apache.commons.io.FileUtils
 import org.slf4j.LoggerFactory
 import ski.mashiro.common.GlobalBean
+import ski.mashiro.entity.config.SystemConfig
+import ski.mashiro.file.ConfigFileOperation
 import kotlin.text.Charsets.UTF_8
 
 /**
@@ -17,6 +20,12 @@ import kotlin.text.Charsets.UTF_8
  */
 object LoggerConfig {
     fun initLogger() {
+        if (!ConfigFileOperation.systemConfigFile.exists()) {
+            GlobalBean.systemConfig = SystemConfig()
+        } else {
+            loadSystemConfig()
+        }
+
         val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
         loggerContext.reset()
 
@@ -46,8 +55,14 @@ object LoggerConfig {
 
         // Get the root logger and add appenders
         val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
-        rootLogger.level = Level.DEBUG
+        rootLogger.level = Level.toLevel(GlobalBean.systemConfig.logLevel)
         rootLogger.addAppender(consoleAppender)
         rootLogger.addAppender(fileAppender)
     }
+
+    private fun loadSystemConfig() {
+        val systemConfigYaml = FileUtils.readFileToString(ConfigFileOperation.systemConfigFile, UTF_8)
+        GlobalBean.systemConfig = GlobalBean.YAML_MAPPER.readValue(systemConfigYaml, SystemConfig::class.java)
+    }
+
 }

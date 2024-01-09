@@ -60,6 +60,7 @@ object WebSocketServiceImpl : WebSocketService {
             .build()
         runCatching {
             webSocket = okHttpClient.newWebSocket(wsRequest, WebSocketListener())
+            log.info { "ws 连接成功" }
         }.getOrElse {
             log.warn { "wsReq发生错误, msg: ${it.message}" }
             throw WebSocketException("wsReq发生错误")
