@@ -84,15 +84,16 @@ object GuGuMediaPlayerController : GuGuMediaPlayerListener {
             if (LockUtils.tryLock(LockConsts.PLAYING_LOCK)) {
                 GlobalBean.IO_SCOPE.launch {
                     curMusicInfo = GlobalBean.musicList.removeFirst()
+                    log.debug { "musicName: ${curMusicInfo?.second?.name} id: ${curMusicInfo?.second?.id} tryLock Success" }
                     runCatching {
                         val music = NeteaseCloudMusicServiceImpl.getMusicById(curMusicInfo!!.second)
-                        log.debug { "getMusic: $music" }
+                        log.debug { "musicName: ${curMusicInfo?.second?.name} id: ${curMusicInfo?.second?.id} getMusicSuccess, info: $music" }
                         mediaPlayer.setMusic(music)
                         mediaPlayer.play()
                     }.getOrElse {
-                        log.warn { "${curMusicInfo?.second?.name}: ${it.message}" }
+                        log.warn { "musicName: ${curMusicInfo?.second?.name} id: ${curMusicInfo?.second?.id}: ${it.message}" }
                         LockUtils.releaseLock(LockConsts.PLAYING_LOCK)
-                        log.debug { "${curMusicInfo?.second?.name} getMusicFailed, releaseLock" }
+                        log.debug { "musicName: ${curMusicInfo?.second?.name} id: ${curMusicInfo?.second?.id} getMusicFailed, releaseLock" }
                         autoPlayNext()
                     }
                 }

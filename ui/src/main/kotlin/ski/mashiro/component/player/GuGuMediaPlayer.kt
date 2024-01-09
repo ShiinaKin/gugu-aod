@@ -55,7 +55,7 @@ class GuGuMediaPlayer {
 
                 override fun error(mediaPlayer: MediaPlayer?) {
                     super.error(mediaPlayer)
-                    log.warn { "mediaPlayer error" }
+                    log.warn { "musicName: ${music?.name} id: ${music?.id}, mediaPlayer error" }
                 }
             })
             audio().setVolume(50)
@@ -75,10 +75,10 @@ class GuGuMediaPlayer {
         job = GlobalBean.IO_SCOPE.launch {
             try {
                 mediaPlayer?.media()?.play(music?.url)
-                log.debug { "playMusic: ${music?.name}" }
+                log.debug { "musicName: ${music?.name} id: ${music?.id} isPlaying" }
             } finally {
                 LockUtils.releaseLock(LockConsts.PLAYING_LOCK)
-                log.debug { "${music?.name} play releaseLock" }
+                log.debug { "musicName: ${music?.name} id: ${music?.id} played, releaseLock" }
             }
         }
     }
