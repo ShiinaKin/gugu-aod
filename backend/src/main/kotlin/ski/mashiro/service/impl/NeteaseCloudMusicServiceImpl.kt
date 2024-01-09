@@ -18,24 +18,20 @@ import java.util.*
 object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
 
     override suspend fun login() {
-        if (StringUtils.isNotBlank(neteaseCloudMusicConfig.cookie) && getLoginStatus()) {
-            return
-        }
         if (Objects.isNull(neteaseCloudMusicConfig.phoneNumber) ||
             (Objects.isNull(neteaseCloudMusicConfig.password) && Objects.isNull(neteaseCloudMusicConfig.passwordMD5))
         ) {
-            return
+            throw NeteaseCouldMusicException("手机号为空或密码/密码MD5为空")
         }
         val okHttpClient = OkHttpClientFactory.getOkHttpClient()
         val loginReq = RequestBuilderFactory.getReqBuilderWithUA()
-            .url("${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/cellphone?" +
-                    "phone=${neteaseCloudMusicConfig.phoneNumber}&".also {
-                        if (Objects.nonNull(neteaseCloudMusicConfig.passwordMD5)) {
-                            it + "md5_password=${neteaseCloudMusicConfig.passwordMD5}"
-                            return@also
-                        }
-                        it + "password=${neteaseCloudMusicConfig.password}"
-                    }
+            .url(
+                "${neteaseCloudMusicConfig.cloudMusicApiUrl}/login/cellphone?" +
+                        "phone=${neteaseCloudMusicConfig.phoneNumber}&" +
+                        "" + if (Objects.nonNull(neteaseCloudMusicConfig.passwordMD5))
+                                "md5_password=${neteaseCloudMusicConfig.passwordMD5}"
+                            else
+                                "password=${neteaseCloudMusicConfig.password}"
             )
             .build()
         val json = withContext(Dispatchers.IO) {
@@ -45,10 +41,10 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
         }
         val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
         if ((respResult["code"] as Int) != 200) {
-            // TODO 提示登陆失败
-            val msg = respResult["msg"]
-            return
+            val msg = respResult["msg"] as String
+            throw NeteaseCouldMusicException(msg)
         }
+
         val cookie = "MUSIC_U=${respResult["token"]}"
         neteaseCloudMusicConfig.cookie = cookie
     }
