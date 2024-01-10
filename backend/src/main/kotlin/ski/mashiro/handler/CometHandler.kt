@@ -32,6 +32,7 @@ object CometHandler {
 
     fun handle(map: HashMap<*, *>) {
         val comet = trans2Comet(map["info"] as List<*>)
+        log.trace { "receiveComet: $comet" }
         parseComet(comet)
     }
 
