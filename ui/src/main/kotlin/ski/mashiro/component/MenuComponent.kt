@@ -2,10 +2,7 @@ package ski.mashiro.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,17 +11,49 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ski.mashiro.BackendMain
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.launch
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.router.Router
+import ski.mashiro.service.impl.WebSocketServiceImpl
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
 
 /**
  * @author mashirot
  * 2024/1/3 19:29
  */
+private val log = KotlinLogging.logger { }
+
 @Composable
 fun MenuComponent() {
+    var tempFailedMsg by remember { mutableStateOf("") }
+    var showFailedDialog by remember { mutableStateOf(false) }
+    if (showFailedDialog) {
+        AlertDialog(
+            modifier = Modifier.width(250.dp).height(120.dp),
+            text = {
+                Text(
+                    text = tempFailedMsg,
+                    textAlign = TextAlign.Start
+                )
+            },
+            onDismissRequest = {
+                showFailedDialog = false
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showFailedDialog = false
+                    },
+                    modifier = Modifier.height(40.dp)
+                ) {
+                    Text(
+                        text = "OK"
+                    )
+                }
+            }
+        )
+    }
     Column(
         modifier = Modifier
             .padding(10.dp, 5.dp)
@@ -122,14 +151,24 @@ fun MenuComponent() {
             ) {
                 var connectStatus by remember { mutableStateOf(false to "未连接") }
                 LaunchedEffect(GlobalBean.webSocket) {
-                    connectStatus = if (GlobalBean.webSocket == null) false to "未连接" else true to "已连接"
+                    connectStatus = if (GlobalBean.webSocket != null) true to "已连接" else false to "未连接"
+                    log.debug { "webSocket changed, websocket: ${GlobalBean.webSocket}" }
+                    log.debug { "connectStatus: $connectStatus" }
                 }
                 Button(
                     onClick = {
-                        if (connectStatus.first) {
-                            BackendMain.disconnect2Room()
-                        } else {
-                            BackendMain.connect2Room()
+                        GlobalBean.IO_SCOPE.launch {
+                            runCatching {
+                                if (connectStatus.first) {
+                                    WebSocketServiceImpl.disconnect2Room()
+                                } else {
+                                    WebSocketServiceImpl.connect2Room()
+                                }
+                            }.getOrElse {
+                                tempFailedMsg = it.message!!
+                                showFailedDialog = true
+                                log.error { it.message }
+                            }
                         }
                     },
                     modifier = Modifier.width(50.dp).height(25.dp),
