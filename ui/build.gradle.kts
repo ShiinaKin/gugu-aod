@@ -32,7 +32,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Exe)
             packageName = "gugu-aod"
-            packageVersion = "1.0.1"
+            packageVersion = "1.0.2"
             licenseFile.set(project.file("../LICENSE"))
 
             windows {
