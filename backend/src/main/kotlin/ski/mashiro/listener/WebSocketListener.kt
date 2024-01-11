@@ -19,7 +19,7 @@ class WebSocketListener : WebSocketListener() {
     private val log = KotlinLogging.logger { this::class.java.name }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-        log.debug { "ws closed" }
+        log.info { "ws closed" }
         HeartbeatTimer.stop()
     }
 

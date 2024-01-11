@@ -40,6 +40,7 @@ object CometHandler {
         if (!comet.content.startsWith(songRequestConfig.prefix) || comet.content[2] != ' ' || comet.content.length < 4) {
             return
         }
+        log.debug { "songReqComet: $comet" }
         IO_SCOPE.launch {
             songRequest(comet)
         }

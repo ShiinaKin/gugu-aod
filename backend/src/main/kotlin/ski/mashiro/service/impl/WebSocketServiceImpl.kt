@@ -37,7 +37,7 @@ object WebSocketServiceImpl : WebSocketService {
             roomConfig.roomId = roomData["room_id"].toString().toLong()
             roomConfig.anchormanUID = roomData["uid"].toString().toLong()
         }.getOrElse {
-            log.warn { "roomReq发生错误, msg: ${it.message}" }
+            log.warn { "roomReq发生错误, roomId: ${roomConfig.roomId}, msg: ${it.message}" }
             throw WebSocketException("roomReq发生错误")
         }
 
@@ -51,7 +51,7 @@ object WebSocketServiceImpl : WebSocketService {
                 data["token"] as String
             }
         }.getOrElse {
-            log.warn { "keyReq发生错误, msg: ${it.message}" }
+            log.warn { "keyReq发生错误, roomId: ${roomConfig.roomId}, msg: ${it.message}" }
             throw WebSocketException("keyReq发生错误")
         }
 
