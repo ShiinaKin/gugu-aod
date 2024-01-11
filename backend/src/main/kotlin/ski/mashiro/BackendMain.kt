@@ -1,6 +1,7 @@
 package ski.mashiro
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.config.LoggerConfig
@@ -13,6 +14,8 @@ import kotlin.time.toJavaDuration
  * @author mashirot
  */
 object BackendMain {
+    private val log = KotlinLogging.logger { this::class.java.name }
+
     fun init() {
         LoggerConfig.initLogger()
         ConfigFileOperation.loadConfig()
@@ -27,13 +30,7 @@ object BackendMain {
         disconnect2Room()
     }
 
-    fun connect2Room() {
-        GlobalBean.IO_SCOPE.launch {
-            WebSocketServiceImpl.connect2Room()
-        }
-    }
-
-    fun disconnect2Room() {
+    private fun disconnect2Room() {
         GlobalBean.IO_SCOPE.launch {
             WebSocketServiceImpl.disconnect2Room()
         }

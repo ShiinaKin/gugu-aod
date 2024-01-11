@@ -169,9 +169,13 @@ object NeteaseCloudMusicServiceImpl : NeteaseCloudMusicService {
             }
         }
         log.debug { "respJson: $json" }
-        val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
-        val data = respResult["data"] as Map<*, *>
-        return data["account"] != null
+        runCatching {
+            val respResult = JSON_MAPPER.readValue(json, HashMap::class.java)
+            val data = respResult["data"] as Map<*, *>
+            return data["account"] != null
+        }.getOrElse {
+            throw NeteaseCouldMusicException("api服务异常, msg: ${it.message}")
+        }
     }
 
     private fun trans2MusicEntity(music: Map<*, *>): NeteaseCloudMusic {

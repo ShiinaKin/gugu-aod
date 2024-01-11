@@ -562,7 +562,13 @@ fun SettingView() {
                             }
                             if (StringUtils.isNotBlank(GlobalBean.neteaseCloudMusicConfig.cookie)) {
                                 GlobalBean.IO_SCOPE.launch {
-                                    GlobalBean.neteaseCloudMusicLoginStatus = NeteaseCloudMusicServiceImpl.getLoginStatus()
+                                    runCatching {
+                                        GlobalBean.neteaseCloudMusicLoginStatus =
+                                            NeteaseCloudMusicServiceImpl.getLoginStatus()
+                                    }.getOrElse {
+                                        tempErrMsg = it.message!!
+                                        showNeteaseErrDialog = true
+                                    }
                                 }
                             }
                             if (ConfigFileOperation.saveNeteaseCloudMusicConfig()) {
