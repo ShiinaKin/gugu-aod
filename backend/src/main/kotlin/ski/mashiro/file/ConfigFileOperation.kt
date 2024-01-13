@@ -80,9 +80,6 @@ object ConfigFileOperation {
 
     private fun saveSystemConfig(): Boolean =
         runCatching {
-            if (!systemConfigFile.exists()) {
-                systemConfigFile.createNewFile()
-            }
             val systemConfigYaml = YAML_MAPPER.writeValueAsString(GlobalBean.systemConfig)
             FileUtils.writeStringToFile(systemConfigFile, systemConfigYaml, UTF_8)
             true
@@ -111,6 +108,11 @@ object ConfigFileOperation {
         if (!neteaseCloudMusicConfigFile.exists()) {
             if (!initNeteaseCloudMusicConfig()) {
                 log.warn { "创建neteaseCloudMusicConfig文件失败" }
+            }
+        }
+        if (!systemConfigFile.exists()) {
+            if (!initSystemConfig()) {
+                log.warn { "创建systemConfig文件失败" }
             }
         }
     }
@@ -163,9 +165,25 @@ object ConfigFileOperation {
         return true
     }
 
+    private fun initSystemConfig(): Boolean {
+        if (!systemConfigFile.createNewFile()) {
+            return false
+        }
+        FileUtils.writeStringToFile(
+            systemConfigFile,
+            YAML_MAPPER.writeValueAsString(GlobalBean.systemConfig),
+            UTF_8
+        )
+        return true
+    }
+
     private fun validationFolder(): Boolean {
         if (CONFIG_FOLDER.exists() && CONFIG_FOLDER.isDirectory) {
-            if (roomConfigFile.exists() && songRequestConfigFile.exists() && neteaseCloudMusicConfigFile.exists()) {
+            if (roomConfigFile.exists()
+                && songRequestConfigFile.exists()
+                && neteaseCloudMusicConfigFile.exists()
+                && systemConfigFile.exists()
+            ) {
                 return true
             }
         }

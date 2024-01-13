@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.entity.config.SystemConfig
 import ski.mashiro.file.ConfigFileOperation
+import java.io.File
 import kotlin.text.Charsets.UTF_8
 
 /**
@@ -29,7 +30,13 @@ object LoggerConfig {
         val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
         loggerContext.reset()
 
-        val logFolder = "${GlobalBean.RESOURCES_FOLDER.path}/logs"
+        val logFolder = File(GlobalBean.RESOURCES_FOLDER, "logs")
+        val logFile = File(logFolder, "log.log")
+
+        // Delete the log file if it exists
+        if (logFile.exists()) {
+            logFile.delete()
+        }
 
         // Create an encoder
         val encoder = PatternLayoutEncoder()
@@ -48,7 +55,7 @@ object LoggerConfig {
         val fileAppender = FileAppender<ILoggingEvent>()
         fileAppender.context = loggerContext
         fileAppender.name = "file"
-        val fileNamePattern = "$logFolder/log.log"
+        val fileNamePattern = logFile.path
         fileAppender.file = fileNamePattern
         fileAppender.encoder = encoder
         fileAppender.start()
@@ -64,5 +71,4 @@ object LoggerConfig {
         val systemConfigYaml = FileUtils.readFileToString(ConfigFileOperation.systemConfigFile, UTF_8)
         GlobalBean.systemConfig = GlobalBean.YAML_MAPPER.readValue(systemConfigYaml, SystemConfig::class.java)
     }
-
 }
