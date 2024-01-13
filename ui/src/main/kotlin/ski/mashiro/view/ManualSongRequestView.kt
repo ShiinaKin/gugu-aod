@@ -18,10 +18,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import ski.mashiro.common.GlobalBean
+import ski.mashiro.component.NotificationComponent
 import ski.mashiro.component.TableCell
+import ski.mashiro.component.notification
 import ski.mashiro.entity.music.NeteaseCloudMusic
 import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
 
@@ -29,39 +32,13 @@ import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
  * @author mashirot
  * 2024/1/3 22:24
  */
+private val log = KotlinLogging.logger { }
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun ManualSongRequestView() {
+    notification()
     Column(modifier = Modifier.fillMaxSize()) {
-
-        var showFailedDialog by remember { mutableStateOf(false) }
-        if (showFailedDialog) {
-            AlertDialog(
-                modifier = Modifier.width(250.dp).height(120.dp),
-                text = {
-                    Text(
-                        text = "请求失败，可能是apiUrl不正确或网络问题",
-                        textAlign = TextAlign.Start
-                    )
-                },
-                onDismissRequest = {
-                    showFailedDialog = false
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showFailedDialog = false
-                        },
-                        modifier = Modifier.height(40.dp)
-                    ) {
-                        Text(
-                            text = "OK"
-                        )
-                    }
-                }
-            )
-        }
-
         var searchResult by remember { mutableStateOf<List<NeteaseCloudMusic>>(emptyList()) }
 
         Row(
@@ -101,7 +78,8 @@ fun ManualSongRequestView() {
                                     searchResult = emptyList()
                                     searchResult = NeteaseCloudMusicServiceImpl.listMusicByKeyword(searchContent)
                                 }.getOrElse {
-                                    showFailedDialog = true
+                                    NotificationComponent.failed("请求失败，可能是apiUrl不正确或网络问题")
+                                    log.error { it.message }
                                 }
                             }
                         }

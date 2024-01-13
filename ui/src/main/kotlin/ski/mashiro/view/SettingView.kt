@@ -3,7 +3,6 @@ package ski.mashiro.view
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -20,6 +19,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import ski.mashiro.common.GlobalBean
+import ski.mashiro.component.NotificationComponent
+import ski.mashiro.component.notification
 import ski.mashiro.exception.NeteaseCouldMusicException
 import ski.mashiro.file.ConfigFileOperation
 import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
@@ -32,90 +33,10 @@ import kotlin.time.Duration
  */
 @Composable
 fun SettingView() {
+    notification()
     Column(
         modifier = Modifier.fillMaxSize().padding(5.dp).verticalScroll(rememberScrollState())
     ) {
-        var showSucceedDialog by remember { mutableStateOf(false) }
-        var showFailedDialog by remember { mutableStateOf(false) }
-        var showUnknownErrDialog by remember { mutableStateOf(false) }
-        if (showSucceedDialog) {
-            AlertDialog(
-                modifier = Modifier.width(200.dp).height(120.dp),
-                text = {
-                    Text(
-                        text = "成功",
-                        textAlign = TextAlign.Center
-                    )
-                },
-                onDismissRequest = {
-                    showSucceedDialog = false
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showSucceedDialog = false
-                        },
-                        modifier = Modifier.height(40.dp)
-                    ) {
-                        Text(
-                            text = "OK"
-                        )
-                    }
-                }
-            )
-        }
-        if (showFailedDialog) {
-            AlertDialog(
-                modifier = Modifier.width(200.dp).height(120.dp),
-                text = {
-                    Text(
-                        text = "内容不合法",
-                        textAlign = TextAlign.Center
-                    )
-                },
-                onDismissRequest = {
-                    showFailedDialog = false
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showFailedDialog = false
-                        },
-                        modifier = Modifier.height(40.dp)
-                    ) {
-                        Text(
-                            text = "OK"
-                        )
-                    }
-                }
-            )
-        }
-        if (showUnknownErrDialog) {
-            AlertDialog(
-                modifier = Modifier.width(200.dp).height(120.dp),
-                text = {
-                    Text(
-                        text = "未知错误，请查看日志",
-                        textAlign = TextAlign.Center
-                    )
-                },
-                onDismissRequest = {
-                    showUnknownErrDialog = false
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showUnknownErrDialog = false
-                        },
-                        modifier = Modifier.height(40.dp)
-                    ) {
-                        Text(
-                            text = "OK"
-                        )
-                    }
-                }
-            )
-        }
         val titleRowModifier = Modifier.fillMaxWidth().height(44.dp)
         val titleBoxModifier = Modifier.height(44.dp)
         val btnModifier = Modifier.width(44.dp).height(28.dp).align(Alignment.CenterHorizontally)
@@ -145,15 +66,15 @@ fun SettingView() {
                 TextButton(
                     onClick = {
                         if (!StringUtils.isNumeric(tempRoomId) || !StringUtils.isNumeric(tempUID)) {
-                            showFailedDialog = true
+                            NotificationComponent.failed()
                         } else {
                             GlobalBean.roomConfig.roomId = tempRoomId.toLong()
                             GlobalBean.roomConfig.uid = tempUID.toLong()
                             GlobalBean.roomConfig.cookie = tempCookie
                             if (ConfigFileOperation.saveRoomConfig()) {
-                                showSucceedDialog = true
+                                NotificationComponent.success()
                             } else {
-                                showUnknownErrDialog = true
+                                NotificationComponent.error()
                             }
                         }
                     },
@@ -276,7 +197,7 @@ fun SettingView() {
                             || Objects.isNull(Duration.parseOrNull(tempEachUserCoolDown))
                             || Objects.isNull(Duration.parseOrNull(tempEachSongCoolDown))
                         ) {
-                            showFailedDialog = true
+                            NotificationComponent.failed()
                         } else {
                             GlobalBean.songRequestConfig.prefix = tempPrefix
                             GlobalBean.songRequestConfig.waitListMaxSize = tempWaitListMaxSize.toInt()
@@ -287,9 +208,9 @@ fun SettingView() {
                                 GlobalBean.songRequestConfig.medalLevel
                             }
                             if (ConfigFileOperation.saveSongRequestConfig()) {
-                                showSucceedDialog = true
+                                NotificationComponent.success()
                             } else {
-                                showUnknownErrDialog = true
+                                NotificationComponent.error()
                             }
                         }
                     },
@@ -453,34 +374,6 @@ fun SettingView() {
         }
         // neteaseCloudMusicConfig
         Column {
-            var tempErrMsg by remember { mutableStateOf("") }
-            var showNeteaseErrDialog by remember { mutableStateOf(false) }
-            if (showNeteaseErrDialog) {
-                AlertDialog(
-                    modifier = Modifier.width(200.dp).height(120.dp),
-                    text = {
-                        Text(
-                            text = "错误: $tempErrMsg",
-                            textAlign = TextAlign.Start
-                        )
-                    },
-                    onDismissRequest = {
-                        showNeteaseErrDialog = false
-                    },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                showNeteaseErrDialog = false
-                            },
-                            modifier = Modifier.height(40.dp)
-                        ) {
-                            Text(
-                                text = "OK"
-                            )
-                        }
-                    }
-                )
-            }
             var tempPhoneNumber
                     by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.phoneNumber?.toString() ?: "") }
             var tempPassword by remember { mutableStateOf(GlobalBean.neteaseCloudMusicConfig.password ?: "") }
@@ -517,14 +410,14 @@ fun SettingView() {
                                 NeteaseCloudMusicServiceImpl.login()
                                 GlobalBean.neteaseCloudMusicLoginStatus = NeteaseCloudMusicServiceImpl.getLoginStatus()
                                 if (ConfigFileOperation.saveNeteaseCloudMusicConfig()) {
-                                    showSucceedDialog = true
+                                    NotificationComponent.success()
                                 } else {
-                                    showUnknownErrDialog = true
+                                    NotificationComponent.error()
                                 }
                             }.getOrElse {
-                                tempErrMsg =
+                                val tempErrMsg =
                                     if (it is NeteaseCouldMusicException) it.message else "未知错误，可能是api配置不正确或网络问题"
-                                showNeteaseErrDialog = true
+                                NotificationComponent.error(tempErrMsg)
                             }
                         }
                     },
@@ -548,7 +441,7 @@ fun SettingView() {
                                     || !tempPhoneNumber.matches(Regex("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}\$")))
                             || StringUtils.isBlank(tempApiUrl)
                         ) {
-                            showFailedDialog = true
+                            NotificationComponent.failed()
                         } else {
                             GlobalBean.neteaseCloudMusicConfig.cookie = tempCookie
                             GlobalBean.neteaseCloudMusicConfig.cloudMusicApiUrl = tempApiUrl
@@ -566,15 +459,15 @@ fun SettingView() {
                                         GlobalBean.neteaseCloudMusicLoginStatus =
                                             NeteaseCloudMusicServiceImpl.getLoginStatus()
                                     }.getOrElse {
-                                        tempErrMsg = it.message!!
-                                        showNeteaseErrDialog = true
+                                        val tempErrMsg = it.message!!
+                                        NotificationComponent.error(tempErrMsg)
                                     }
                                 }
                             }
                             if (ConfigFileOperation.saveNeteaseCloudMusicConfig()) {
-                                showSucceedDialog = true
+                                NotificationComponent.success()
                             } else {
-                                showUnknownErrDialog = true
+                                NotificationComponent.error()
                             }
                         }
                     },

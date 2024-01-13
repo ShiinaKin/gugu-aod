@@ -26,34 +26,7 @@ private val log = KotlinLogging.logger { }
 
 @Composable
 fun MenuComponent() {
-    var tempFailedMsg by remember { mutableStateOf("") }
-    var showFailedDialog by remember { mutableStateOf(false) }
-    if (showFailedDialog) {
-        AlertDialog(
-            modifier = Modifier.width(250.dp).height(120.dp),
-            text = {
-                Text(
-                    text = tempFailedMsg,
-                    textAlign = TextAlign.Start
-                )
-            },
-            onDismissRequest = {
-                showFailedDialog = false
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showFailedDialog = false
-                    },
-                    modifier = Modifier.height(40.dp)
-                ) {
-                    Text(
-                        text = "OK"
-                    )
-                }
-            }
-        )
-    }
+    notification()
     Column(
         modifier = Modifier
             .padding(10.dp, 5.dp)
@@ -165,8 +138,7 @@ fun MenuComponent() {
                                     WebSocketServiceImpl.connect2Room()
                                 }
                             }.getOrElse {
-                                tempFailedMsg = it.message!!
-                                showFailedDialog = true
+                                NotificationComponent.failed(it.message!!)
                                 log.error { it.message }
                             }
                         }
