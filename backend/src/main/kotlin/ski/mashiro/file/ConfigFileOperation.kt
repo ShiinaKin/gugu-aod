@@ -8,7 +8,6 @@ import ski.mashiro.common.GlobalBean.YAML_MAPPER
 import ski.mashiro.entity.config.NeteaseCloudMusicConfig
 import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
-import ski.mashiro.entity.config.SystemConfig
 import java.io.File
 import kotlin.text.Charsets.UTF_8
 

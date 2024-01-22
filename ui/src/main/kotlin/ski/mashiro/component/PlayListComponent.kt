@@ -28,8 +28,8 @@ import ski.mashiro.common.GlobalBean
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun PlayListComponent() {
-    val idxWeight = 0.05F
-    val musicNameWeight = 0.35F
+    val idxWeight = 0.1F
+    val musicNameWeight = 0.3F
     val singerWeight = 0.25F
     val durationWeight = 0.1F
     val bookingUsernameWeight = 0.25F
