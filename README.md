@@ -82,3 +82,4 @@
 ## 已知问题
 
 - <del>无法播放直链后缀为.flac的音频，猜测是三方库问题</del> 已解决
+- 由于[NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)于24/1/22删库，请寻找三方fork仓库进行搭建
