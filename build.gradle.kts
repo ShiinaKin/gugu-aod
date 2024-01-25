@@ -10,7 +10,7 @@ repositories {
 
 subprojects {
     group = "ski.mashiro"
-    version = "1.0.3"
+    version = "1.1.0"
 
     apply(plugin = "kotlin")
 
