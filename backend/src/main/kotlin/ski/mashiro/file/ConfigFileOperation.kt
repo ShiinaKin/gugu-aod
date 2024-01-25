@@ -43,6 +43,7 @@ object ConfigFileOperation {
         val systemConfigYaml = FileUtils.readFileToString(systemConfigFile, UTF_8)
         GlobalBean.systemConfig = YAML_MAPPER.readValue(systemConfigYaml, SystemConfig::class.java)
         GlobalBean.keywordBlackList = GlobalBean.systemConfig.keywordBlackList.toMutableStateList()
+        GlobalBean.seasonMode = GlobalBean.systemConfig.seasonMode
     }
 
     fun saveConfig(): Boolean =

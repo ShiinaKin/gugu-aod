@@ -93,10 +93,11 @@ fun MenuComponent() {
 
         if (NativeDiscovery().discover()) {
             Column(
-                modifier = Modifier.fillMaxWidth().height(80.dp),
+                modifier = Modifier.fillMaxWidth().height(120.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
+                SeasonDisplayComponent()
                 var connectStatus by remember { mutableStateOf(false to "未连接") }
                 LaunchedEffect(GlobalBean.webSocket) {
                     connectStatus = if (GlobalBean.webSocket != null) true to "已连接" else false to "未连接"

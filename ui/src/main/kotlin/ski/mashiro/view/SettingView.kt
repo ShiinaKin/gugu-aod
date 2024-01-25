@@ -73,10 +73,13 @@ fun SettingView() {
                         GlobalBean.systemConfig.seasonResetCoolDown = tempSeasonResetCoolDown
                         GlobalBean.systemConfig.singleSeasonMusicNum = tempSingleSeasonMusicNum.toInt()
                         GlobalBean.systemConfig.logLevel = tempLogLevel
-                        GlobalBean.systemConfig.seasonMode = tempSeasonMode
-                        if (tempSeasonMode) {
+                        if (!GlobalBean.systemConfig.seasonMode && tempSeasonMode) {
                             BackendMain.resetMusicList()
+                            GlobalBean.seasonId = 1
                         }
+                        GlobalBean.seasonMode = tempSeasonMode
+                        GlobalBean.systemConfig.seasonMode = tempSeasonMode
+                        NotificationComponent.success()
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.LightGray

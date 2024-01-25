@@ -53,11 +53,14 @@ object CometHandler {
             log.debug { "musicList reached maximum size" }
             return
         }
-        if (GlobalBean.systemConfig.seasonMode && GlobalBean.musicList.size >= GlobalBean.systemConfig.singleSeasonMusicNum) {
-            log.debug { "musicList reached maximum size in season mode" }
-            return
+        if (GlobalBean.systemConfig.seasonMode && GlobalBean.musicList.isEmpty()) {
+            GlobalBean.seasonInProgress = false
         }
         val isAdmin = comet.isAnchorman || comet.isRoomManager
+        if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress) {
+            log.debug { "the season is in progress" }
+            return
+        }
         if (!isAdmin) {
             if (Objects.nonNull(songRequestConfig.medalName)) {
                 if (Objects.isNull(comet.medalName) || comet.medalName != songRequestConfig.medalName) {
@@ -98,6 +101,12 @@ object CometHandler {
             }
             GlobalBean.uidCache.put(comet.uid, comet.uid)
             GlobalBean.musicCache.put(musicWithOutUrl.id, musicWithOutUrl)
+            if (
+                GlobalBean.systemConfig.seasonMode && !GlobalBean.seasonInProgress
+                && GlobalBean.musicList.size >= GlobalBean.systemConfig.singleSeasonMusicNum
+            ) {
+                GlobalBean.seasonInProgress = true
+            }
         }.getOrElse {
             log.warn { "getMusic Failed by keyword: $keyword, cometSender: ${comet.username}, completeContent: ${comet.content}" }
         }

@@ -38,4 +38,7 @@ object GlobalBean {
     val musicList = mutableStateListOf<Pair<String, NeteaseCloudMusic>>()
     var webSocket by mutableStateOf<WebSocket?>(null)
     var neteaseCloudMusicLoginStatus by mutableStateOf(false)
+    var seasonMode by mutableStateOf(false)
+    var seasonInProgress by mutableStateOf(false)
+    var seasonId by mutableStateOf(0)
 }
