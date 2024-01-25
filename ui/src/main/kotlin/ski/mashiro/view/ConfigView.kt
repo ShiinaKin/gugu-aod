@@ -32,7 +32,7 @@ import kotlin.time.Duration
  * 2024/1/3 19:29
  */
 @Composable
-fun SettingView() {
+fun ConfigView() {
     notification()
     Column(
         modifier = Modifier.fillMaxSize().padding(5.dp).verticalScroll(rememberScrollState())
