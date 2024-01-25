@@ -29,90 +29,65 @@ fun MenuComponent() {
     notification()
     Column(
         modifier = Modifier
-            .padding(10.dp, 5.dp)
+            .padding(5.dp)
             .width(64.dp)
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            val btnSize = 60.dp
-            val btnDescFontSize = 12.sp
-
-            Button(
+            val btnModifier = Modifier.size(64.dp)
+            IconButton(
                 onClick = {
                     Router.navController.navigate("/home")
                 },
-                modifier = Modifier.padding(0.dp, 5.dp)
-                    .size(btnSize),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent
-                )
+                modifier = btnModifier,
             ) {
-                Column {
-                    Image(
-                        painter = painterResource("icons/home.svg"),
-                        "homeIcon",
-                        alignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "主页",
-                        textAlign = TextAlign.Center,
-                        fontSize = btnDescFontSize
-                    )
-                }
+                Image(
+                    painter = painterResource("icons/home.svg"),
+                    "homeIcon",
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-            Button(
+            IconButton(
                 onClick = {
                     Router.navController.navigate("/manual_song_req")
                 },
-                modifier = Modifier.padding(0.dp, 5.dp)
-                    .size(btnSize),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent
-                )
+                modifier = btnModifier,
             ) {
-                Column {
-                    Image(
-                        painter = painterResource("icons/manage_search.svg"),
-                        "searchIcon",
-                        alignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "点歌",
-                        textAlign = TextAlign.Center,
-                        fontSize = btnDescFontSize
-                    )
-                }
+                Image(
+                    painter = painterResource("icons/manage_search.svg"),
+                    "searchIcon",
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-            Button(
+            IconButton(
                 onClick = {
                     Router.navController.navigate("/setting")
                 },
-                modifier = Modifier.padding(0.dp, 5.dp)
-                    .size(btnSize),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent
-                )
+                modifier = btnModifier,
             ) {
-                Column {
-                    Image(
-                        painter = painterResource("icons/setting.svg"),
-                        "settingIcon",
-                        alignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "设置",
-                        textAlign = TextAlign.Center,
-                        fontSize = btnDescFontSize
-                    )
-                }
+                Image(
+                    painter = painterResource("icons/tune.svg"),
+                    "tuneIcon",
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            IconButton(
+                onClick = {
+                    Router.navController.navigate("/config")
+                },
+                modifier = btnModifier,
+            ) {
+                Image(
+                    painter = painterResource("icons/setting.svg"),
+                    "settingIcon",
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
 

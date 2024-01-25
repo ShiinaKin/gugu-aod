@@ -1,7 +1,9 @@
 package ski.mashiro.handler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.StringUtils
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.common.GlobalBean.IO_SCOPE
@@ -51,6 +53,10 @@ object CometHandler {
             log.debug { "musicList reached maximum size" }
             return
         }
+        if (GlobalBean.systemConfig.seasonMode && GlobalBean.musicList.size >= GlobalBean.systemConfig.singleSeasonMusicNum) {
+            log.debug { "musicList reached maximum size in season mode" }
+            return
+        }
         val isAdmin = comet.isAnchorman || comet.isRoomManager
         if (!isAdmin) {
             if (Objects.nonNull(songRequestConfig.medalName)) {
@@ -74,6 +80,13 @@ object CometHandler {
         }
         runCatching {
             val musicWithOutUrl = NeteaseCloudMusicServiceImpl.getMusicByKeyword(keyword)
+            val matched = withContext(Dispatchers.IO) {
+                !isAdmin && GlobalBean.keywordBlackList.any { musicWithOutUrl.name.contains(it) }
+            }
+            if (matched) {
+                log.debug { "musicId: ${musicWithOutUrl.id} is in black list, musicName: ${musicWithOutUrl.name}" }
+                return
+            }
             if (Objects.nonNull(GlobalBean.musicCache.getIfPresent(musicWithOutUrl.id))) {
                 log.debug { "musicId: ${musicWithOutUrl.id} is cooling, musicName: ${musicWithOutUrl.name}" }
                 return
