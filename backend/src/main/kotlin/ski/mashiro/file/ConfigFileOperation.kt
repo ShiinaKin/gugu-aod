@@ -1,5 +1,6 @@
 package ski.mashiro.file
 
+import androidx.compose.runtime.toMutableStateList
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.commons.io.FileUtils
 import ski.mashiro.common.GlobalBean
@@ -8,6 +9,7 @@ import ski.mashiro.common.GlobalBean.YAML_MAPPER
 import ski.mashiro.entity.config.NeteaseCloudMusicConfig
 import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
+import ski.mashiro.entity.config.SystemConfig
 import java.io.File
 import kotlin.text.Charsets.UTF_8
 
@@ -35,6 +37,12 @@ object ConfigFileOperation {
         val neteaseCloudMusicConfigYaml = FileUtils.readFileToString(neteaseCloudMusicConfigFile, UTF_8)
         GlobalBean.neteaseCloudMusicConfig =
             YAML_MAPPER.readValue(neteaseCloudMusicConfigYaml, NeteaseCloudMusicConfig::class.java)
+    }
+
+    fun loadSystemConfig() {
+        val systemConfigYaml = FileUtils.readFileToString(systemConfigFile, UTF_8)
+        GlobalBean.systemConfig = YAML_MAPPER.readValue(systemConfigYaml, SystemConfig::class.java)
+        GlobalBean.keywordBlackList = GlobalBean.systemConfig.keywordBlackList.toMutableStateList()
     }
 
     fun saveConfig(): Boolean =

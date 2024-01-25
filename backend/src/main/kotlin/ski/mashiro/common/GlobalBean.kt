@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -33,6 +34,7 @@ object GlobalBean {
     lateinit var systemConfig: SystemConfig
     lateinit var uidCache: Cache<Long, Long>
     lateinit var musicCache: Cache<Long, NeteaseCloudMusic>
+    lateinit var keywordBlackList: SnapshotStateList<String>
     val musicList = mutableStateListOf<Pair<String, NeteaseCloudMusic>>()
     var webSocket by mutableStateOf<WebSocket?>(null)
     var neteaseCloudMusicLoginStatus by mutableStateOf(false)
