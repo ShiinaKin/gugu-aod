@@ -75,7 +75,6 @@ fun SettingView() {
                         GlobalBean.systemConfig.logLevel = tempLogLevel
                         if (!GlobalBean.systemConfig.seasonMode && tempSeasonMode) {
                             BackendMain.resetMusicList()
-                            GlobalBean.seasonId = 1
                         }
                         GlobalBean.seasonMode = tempSeasonMode
                         GlobalBean.systemConfig.seasonMode = tempSeasonMode
@@ -290,7 +289,7 @@ fun SettingView() {
                     }
                 }
             }
-            LazyColumn() {
+            LazyColumn {
                 stickyHeader {
                     Row(
                         Modifier.fillMaxWidth().background(Color.White),

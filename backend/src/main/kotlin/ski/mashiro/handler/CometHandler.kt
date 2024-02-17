@@ -54,10 +54,11 @@ object CometHandler {
             return
         }
         if (GlobalBean.systemConfig.seasonMode && GlobalBean.musicList.isEmpty()) {
-            GlobalBean.seasonInProgress = false
+            GlobalBean.seasonInProgress.value = false
+            log.debug { "seasonInProgress is false" }
         }
         val isAdmin = comet.isAnchorman || comet.isRoomManager
-        if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress) {
+        if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.value) {
             log.debug { "the season is in progress" }
             return
         }
@@ -94,6 +95,10 @@ object CometHandler {
                 log.debug { "musicId: ${musicWithOutUrl.id} is cooling, musicName: ${musicWithOutUrl.name}" }
                 return
             }
+            if (GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.value) {
+                log.debug { "double check of seasonInProgress is true" }
+                return
+            }
             GlobalBean.musicList.add(comet.username to musicWithOutUrl)
             log.debug { "${comet.username} booking success, musicName: ${musicWithOutUrl.name}" }
             if (isAdmin) {
@@ -102,10 +107,11 @@ object CometHandler {
             GlobalBean.uidCache.put(comet.uid, comet.uid)
             GlobalBean.musicCache.put(musicWithOutUrl.id, musicWithOutUrl)
             if (
-                GlobalBean.systemConfig.seasonMode && !GlobalBean.seasonInProgress
+                GlobalBean.systemConfig.seasonMode && !GlobalBean.seasonInProgress.value
                 && GlobalBean.musicList.size >= GlobalBean.systemConfig.singleSeasonMusicNum
             ) {
-                GlobalBean.seasonInProgress = true
+                GlobalBean.seasonInProgress.value = true
+                log.debug { "seasonInProgress is true" }
             }
         }.getOrElse {
             log.warn { "getMusic Failed by keyword: $keyword, cometSender: ${comet.username}, completeContent: ${comet.content}" }

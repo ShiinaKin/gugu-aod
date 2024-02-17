@@ -24,6 +24,10 @@ object BackendMain {
 
     fun resetMusicList() {
         GlobalBean.musicList.clear()
+        resetMusicCoolDown()
+    }
+
+    fun resetMusicCoolDown() {
         if (GlobalBean.systemConfig.seasonResetCoolDown) {
             GlobalBean.uidCache.invalidateAll()
             GlobalBean.musicCache.invalidateAll()
