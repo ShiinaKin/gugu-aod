@@ -10,7 +10,7 @@ repositories {
 
 subprojects {
     group = "ski.mashiro"
-    version = "1.1.2"
+    version = extra["gugu-aod.version"].toString()
 
     apply(plugin = "kotlin")
 
