@@ -5,10 +5,7 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import ski.mashiro.view.ConfigView
-import ski.mashiro.view.HomeView
-import ski.mashiro.view.ManualSongRequestView
-import ski.mashiro.view.SettingView
+import ski.mashiro.view.*
 
 /**
  * @author mashirot
@@ -44,6 +41,11 @@ object Router {
                 route = "/config",
             ) {
                 ConfigView()
+            }
+            scene(
+                route = "/info",
+            ) {
+                InfoView()
             }
         }
         return navController

@@ -89,6 +89,19 @@ fun MenuComponent() {
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+            IconButton(
+                onClick = {
+                    Router.navController.navigate("/info")
+                },
+                modifier = btnModifier,
+            ) {
+                Image(
+                    painter = painterResource("icons/info.svg"),
+                    "infoIcon",
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
         if (NativeDiscovery().discover()) {
