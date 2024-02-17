@@ -17,6 +17,7 @@ import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
 import ski.mashiro.entity.config.SystemConfig
 import ski.mashiro.entity.music.NeteaseCloudMusic
+import ski.mashiro.util.ObservableAtomicReference
 import java.io.File
 
 /**
@@ -39,6 +40,13 @@ object GlobalBean {
     var webSocket by mutableStateOf<WebSocket?>(null)
     var neteaseCloudMusicLoginStatus by mutableStateOf(false)
     var seasonMode by mutableStateOf(false)
-    var seasonInProgress by mutableStateOf(false)
-    var seasonId by mutableStateOf(0)
+    val seasonInProgress by lazy {
+        ObservableAtomicReference(false) { atomicBoolean, invokeCallback ->
+            val oldValue = atomicBoolean.get()
+            val newValue = !oldValue
+            if (atomicBoolean.compareAndSet(oldValue, newValue)) {
+                invokeCallback.invoke(newValue)
+            }
+        }
+    }
 }
