@@ -8,14 +8,14 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class ObservableAtomicReference<T>(
     initValue: T,
-    private val setFunc: (AtomicReference<T>, (T) -> Unit) -> Unit
+    private val setFunc: (AtomicReference<T>, newValue: T, (T) -> Unit) -> Unit
 ) {
     private val atomicReference = AtomicReference(initValue)
     private val listenerList = mutableListOf<(T) -> Unit>()
 
     var value: T
         get() = atomicReference.get()
-        set(_) = setFunc.invoke(atomicReference, this::invokeListener)
+        set(value) = setFunc.invoke(atomicReference, value, this::invokeListener)
 
     fun addListener(listener: (T) -> Unit) = listenerList.add(listener)
 

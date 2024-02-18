@@ -18,7 +18,7 @@ import ski.mashiro.util.ObservableAtomicReference
 @Composable
 fun SeasonDisplayComponent() {
     val atomicSeasonId = remember {
-        ObservableAtomicReference(0) { atomicInteger, invokeCallBack ->
+        ObservableAtomicReference(1) { atomicInteger, _, invokeCallBack ->
             val oldValue = atomicInteger.get()
             val newValue = oldValue + 1
             if (atomicInteger.compareAndSet(oldValue, newValue)) {
@@ -26,7 +26,7 @@ fun SeasonDisplayComponent() {
             }
         }
     }
-    var displaySeasonId by remember { mutableStateOf(0) }
+    var displaySeasonId by remember { mutableStateOf(1) }
     atomicSeasonId.addListener{ newValue ->
         displaySeasonId = newValue
     }

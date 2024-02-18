@@ -55,7 +55,7 @@ object CometHandler {
         }
         if (GlobalBean.systemConfig.seasonMode && GlobalBean.musicList.isEmpty()) {
             GlobalBean.seasonInProgress.value = false
-            log.debug { "seasonInProgress is false" }
+            log.debug { "seasonInProgress is: ${GlobalBean.seasonInProgress.value}" }
         }
         val isAdmin = comet.isAnchorman || comet.isRoomManager
         if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.value) {
@@ -111,7 +111,7 @@ object CometHandler {
                 && GlobalBean.musicList.size >= GlobalBean.systemConfig.singleSeasonMusicNum
             ) {
                 GlobalBean.seasonInProgress.value = true
-                log.debug { "seasonInProgress is true" }
+                log.debug { "seasonInProgress is: ${GlobalBean.seasonInProgress.value}" }
             }
         }.getOrElse {
             log.warn { "getMusic Failed by keyword: $keyword, cometSender: ${comet.username}, completeContent: ${comet.content}" }

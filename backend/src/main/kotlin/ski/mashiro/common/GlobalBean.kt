@@ -41,9 +41,11 @@ object GlobalBean {
     var neteaseCloudMusicLoginStatus by mutableStateOf(false)
     var seasonMode by mutableStateOf(false)
     val seasonInProgress by lazy {
-        ObservableAtomicReference(false) { atomicBoolean, invokeCallback ->
+        ObservableAtomicReference(false) { atomicBoolean, newValue, invokeCallback ->
             val oldValue = atomicBoolean.get()
-            val newValue = !oldValue
+            if (oldValue == newValue) {
+                return@ObservableAtomicReference
+            }
             if (atomicBoolean.compareAndSet(oldValue, newValue)) {
                 invokeCallback.invoke(newValue)
             }
