@@ -30,21 +30,23 @@
 
 ## 配置说明
 
-> 带☆为必填项，带▲项设置后重启生效
+> - ☆ 必填
+> - ▲ 重启生效
+> - ^ 不稳定
 >
 > 更改后务必保存
 
 ### 功能设置
 
-- 是否启用赛季模式: 赛季模式指待播放歌曲>=单赛季歌曲数量后暂时禁止点歌，直到待播放歌曲为空
+- 是否启用赛季模式^: 赛季模式指待播放歌曲>=单赛季歌曲数量后暂时禁止点歌，直到待播放歌曲为空
 - 赛季重置是否重置歌曲冷却: -
 - 单赛季歌曲数量: -
-- 日志等级: 默认info，有问题可改成debug，查看日志并issues反馈
+- 日志等级▲: 默认info，有问题可改成debug，查看日志并issues反馈
 - 黑名单: 歌名关键词黑名单，匹配则不进入待播放列表
 
 ### 房间设置
 
-- 房间号*：直播间房间号，可以填写短号
+- 房间号☆：直播间房间号，可以填写短号
 - UID：小号(建议)的uid
 - Cookie：登录状态的cookie
 
@@ -77,7 +79,7 @@
 - 手机号：网易云登陆用
 - 密码/密码MD5：网易云登陆用，密码MD5优先级>密码优先级，会优先使用MD5，只需提供一项即可
 - Cookie：网易云Cookie，用于播放会员歌曲
-- ApiUrl*：网易云ApiUrl，请自行搭建，见此项目：[NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+- ApiUrl☆：网易云ApiUrl，请自行搭建，见此项目：[NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 > 下面操作的前提是配置ApiUrl<br/>
 > 说明:
