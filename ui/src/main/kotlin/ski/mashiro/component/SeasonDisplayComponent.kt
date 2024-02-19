@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import io.github.oshai.kotlinlogging.KotlinLogging
 import ski.mashiro.BackendMain
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.util.ObservableAtomicReference
@@ -17,11 +18,13 @@ import ski.mashiro.util.ObservableAtomicReference
  */
 @Composable
 fun SeasonDisplayComponent() {
+    val log = KotlinLogging.logger{ }
     val atomicSeasonId = remember {
         ObservableAtomicReference(1) { atomicInteger, _, invokeCallBack ->
             val oldValue = atomicInteger.get()
             val newValue = oldValue + 1
             if (atomicInteger.compareAndSet(oldValue, newValue)) {
+                log.debug { "atomicSeasonId update, value: $newValue" }
                 invokeCallBack.invoke(newValue)
             }
         }
