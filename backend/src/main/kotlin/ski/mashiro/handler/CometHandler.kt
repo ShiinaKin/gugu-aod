@@ -75,7 +75,7 @@ object CometHandler {
             }
         }
         if (Objects.nonNull(GlobalBean.uidCache.getIfPresent(comet.uid))) {
-            log.debug { "cometSender: ${comet.username} is cooling" }
+            log.debug { "cometSender: ${comet.username} is cooling, uid: ${comet.uid}" }
             return
         }
         val keyword = comet.content.substring(3)
@@ -95,26 +95,15 @@ object CometHandler {
                 log.debug { "musicId: ${musicWithOutUrl.id} is cooling, musicName: ${musicWithOutUrl.name}" }
                 return
             }
-            if (GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.value) {
-                log.debug { "double check of seasonInProgress is true" }
+            // double check
+            if (GlobalBean.musicList.size >= songRequestConfig.waitListMaxSize) {
+                log.debug { "musicList reached maximum size" }
                 return
             }
-            GlobalBean.musicList.add(comet.username to musicWithOutUrl)
-            log.debug { "${comet.username} booking success, musicName: ${musicWithOutUrl.name}" }
-            if (isAdmin) {
-                return
-            }
-            GlobalBean.uidCache.put(comet.uid, comet.uid)
-            GlobalBean.musicCache.put(musicWithOutUrl.id, musicWithOutUrl)
-            if (
-                GlobalBean.systemConfig.seasonMode && !GlobalBean.seasonInProgress.value
-                && GlobalBean.musicList.size >= GlobalBean.systemConfig.singleSeasonMusicNum
-            ) {
-                GlobalBean.seasonInProgress.value = true
-                log.debug { "seasonInProgress is: ${GlobalBean.seasonInProgress.value}" }
-            }
+            GlobalBean.musicWaitingQueue.offer(musicWithOutUrl to Triple(comet.username, comet.uid, isAdmin))
+            MusicHandler.handleSongRequestComet()
         }.getOrElse {
-            log.warn { "getMusic Failed by keyword: $keyword, cometSender: ${comet.username}, completeContent: ${comet.content}" }
+            log.warn { "getMusic Failed by keyword: $keyword, cometSender: ${comet.username}, completeContent: ${comet.content}, errorMsg: ${it.message}" }
         }
     }
 

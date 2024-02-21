@@ -12,13 +12,16 @@ import com.github.benmanes.caffeine.cache.Cache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import okhttp3.WebSocket
+import ski.mashiro.entity.bilibili.Comet
 import ski.mashiro.entity.config.NeteaseCloudMusicConfig
 import ski.mashiro.entity.config.RoomConfig
 import ski.mashiro.entity.config.SongRequestConfig
 import ski.mashiro.entity.config.SystemConfig
+import ski.mashiro.entity.music.Music
 import ski.mashiro.entity.music.NeteaseCloudMusic
 import ski.mashiro.util.ObservableAtomicReference
 import java.io.File
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * @author mashirot
@@ -34,9 +37,10 @@ object GlobalBean {
     lateinit var songRequestConfig: SongRequestConfig
     lateinit var systemConfig: SystemConfig
     lateinit var uidCache: Cache<Long, Long>
-    lateinit var musicCache: Cache<Long, NeteaseCloudMusic>
+    lateinit var musicCache: Cache<Long, Music>
     lateinit var keywordBlackList: SnapshotStateList<String>
-    val musicList = mutableStateListOf<Pair<String, NeteaseCloudMusic>>()
+    val musicWaitingQueue = ConcurrentLinkedQueue<Pair<Music, Triple<String, Long, Boolean>>>()
+    val musicList = mutableStateListOf<Pair<String, Music>>()
     var webSocket by mutableStateOf<WebSocket?>(null)
     var neteaseCloudMusicLoginStatus by mutableStateOf(false)
     var seasonMode by mutableStateOf(false)
