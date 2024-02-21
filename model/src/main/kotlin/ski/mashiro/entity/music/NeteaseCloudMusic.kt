@@ -6,14 +6,14 @@ import org.apache.commons.lang3.time.DurationFormatUtils
  * @author mashirot
  */
 data class NeteaseCloudMusic(
-    val id: Long,
-    val name: String,
-    val singer: String,
-    val duration: Long,
-    val durationStr: String,
-    var coverImgUrl: String?,
-    var url: String?
-) {
+    override val id: Long,
+    override val name: String,
+    override val singer: String,
+    override val duration: Long,
+    override val durationStr: String,
+    override var coverImgUrl: String?,
+    override var url: String?
+) : Music() {
     constructor(
         id: Long,
         name: String,
