@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import org.apache.commons.lang3.time.DurationFormatUtils
 import ski.mashiro.common.GlobalBean
 import ski.mashiro.const.LockConsts
+import ski.mashiro.entity.music.Music
 import ski.mashiro.entity.music.NeteaseCloudMusic
 import ski.mashiro.enum.PlayerStatusEnum
 import ski.mashiro.service.impl.NeteaseCloudMusicServiceImpl
@@ -21,7 +22,7 @@ object GuGuMediaPlayerController : GuGuMediaPlayerListener {
     private val log = KotlinLogging.logger { this::class.java.name }
 
     private const val INIT_TIME_STR = "00:00"
-    var curMusicInfo by mutableStateOf<Pair<String, NeteaseCloudMusic>?>(null)
+    var curMusicInfo by mutableStateOf<Pair<String, Music>?>(null)
     var durationStr by mutableStateOf(INIT_TIME_STR)
     var curTimeStr by mutableStateOf(INIT_TIME_STR)
     var progress by mutableStateOf(0F)
@@ -86,7 +87,7 @@ object GuGuMediaPlayerController : GuGuMediaPlayerListener {
                     curMusicInfo = GlobalBean.musicList.removeFirst()
                     log.debug { "musicName: ${curMusicInfo?.second?.name} id: ${curMusicInfo?.second?.id} tryLock Success" }
                     runCatching {
-                        val music = NeteaseCloudMusicServiceImpl.getMusicById(curMusicInfo!!.second)
+                        val music = NeteaseCloudMusicServiceImpl.getMusicById(curMusicInfo!!.second as NeteaseCloudMusic)
                         log.debug { "musicName: ${curMusicInfo?.second?.name} id: ${curMusicInfo?.second?.id} getMusicSuccess, info: $music" }
                         mediaPlayer.setMusic(music)
                         mediaPlayer.play()
