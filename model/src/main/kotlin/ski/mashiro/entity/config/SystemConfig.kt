@@ -10,5 +10,5 @@ data class SystemConfig(
     var singleSeasonMusicNum: Int = 8,
     var keywordBlackList: MutableSet<String> = mutableSetOf(),
     var logLevel: String = "info",
-    val version: String = "1.1.2"
+    val version: String = "1.2.0"
 )
