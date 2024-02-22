@@ -20,7 +20,7 @@ fun InfoView() {
             Text("Version: ${GlobalBean.systemConfig.version}")
         }
         Row {
-            Text("This program is protected is licensed under the GPLv3")
+            Text("This program is licensed under the GPLv3")
         }
     }
 }
