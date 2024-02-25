@@ -39,6 +39,10 @@ object MusicHandler {
                 log.debug { "musicId: ${musicWithOutUrl.id} is cooling, musicName: ${musicWithOutUrl.name}" }
                 continue
             }
+            if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.value) {
+                log.debug { "the season is in progress" }
+                continue
+            }
             GlobalBean.musicList.add(username to musicWithOutUrl)
             log.debug { "$username booking success, musicName: ${musicWithOutUrl.name}" }
             if (
