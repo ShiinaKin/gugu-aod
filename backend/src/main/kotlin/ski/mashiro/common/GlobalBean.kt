@@ -22,6 +22,7 @@ import ski.mashiro.entity.music.NeteaseCloudMusic
 import ski.mashiro.util.ObservableAtomicReference
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author mashirot
@@ -44,15 +45,5 @@ object GlobalBean {
     var webSocket by mutableStateOf<WebSocket?>(null)
     var neteaseCloudMusicLoginStatus by mutableStateOf(false)
     var seasonMode by mutableStateOf(false)
-    val seasonInProgress by lazy {
-        ObservableAtomicReference(false) { atomicBoolean, newValue, invokeCallback ->
-            val oldValue = atomicBoolean.get()
-            if (oldValue == newValue) {
-                return@ObservableAtomicReference
-            }
-            if (atomicBoolean.compareAndSet(oldValue, newValue)) {
-                invokeCallback.invoke(newValue)
-            }
-        }
-    }
+    val seasonInProgress = AtomicBoolean(false)
 }

@@ -54,11 +54,11 @@ object CometHandler {
             return
         }
         if (GlobalBean.systemConfig.seasonMode && GlobalBean.musicList.isEmpty()) {
-            GlobalBean.seasonInProgress.value = false
-            log.debug { "seasonInProgress is: ${GlobalBean.seasonInProgress.value}" }
+            GlobalBean.seasonInProgress.compareAndSet(true, false)
+            log.debug { "seasonInProgress is: ${GlobalBean.seasonInProgress.get()}" }
         }
         val isAdmin = comet.isAnchorman || comet.isRoomManager
-        if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.value) {
+        if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.get()) {
             log.debug { "the season is in progress" }
             return
         }

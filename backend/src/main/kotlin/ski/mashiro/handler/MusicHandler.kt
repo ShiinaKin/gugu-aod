@@ -39,18 +39,18 @@ object MusicHandler {
                 log.debug { "musicId: ${musicWithOutUrl.id} is cooling, musicName: ${musicWithOutUrl.name}" }
                 continue
             }
-            if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.value) {
+            if (!isAdmin && GlobalBean.systemConfig.seasonMode && GlobalBean.seasonInProgress.get()) {
                 log.debug { "the season is in progress" }
                 continue
             }
             GlobalBean.musicList.add(username to musicWithOutUrl)
             log.debug { "$username booking success, musicName: ${musicWithOutUrl.name}" }
             if (
-                GlobalBean.systemConfig.seasonMode && !GlobalBean.seasonInProgress.value
+                GlobalBean.systemConfig.seasonMode && !GlobalBean.seasonInProgress.get()
                 && GlobalBean.musicList.size >= GlobalBean.systemConfig.singleSeasonMusicNum
             ) {
-                GlobalBean.seasonInProgress.value = true
-                log.debug { "seasonInProgress is: ${GlobalBean.seasonInProgress.value}" }
+                GlobalBean.seasonInProgress.compareAndSet(false, true)
+                log.debug { "seasonInProgress is: ${GlobalBean.seasonInProgress.get()}" }
             }
             if (isAdmin) {
                 continue
